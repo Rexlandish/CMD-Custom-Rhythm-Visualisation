@@ -1,0 +1,88 @@
+Required Plugins:
+	PluginP.SinWave
+	PluginP.Position
+	PluginP.Lerp
+	PluginP.Bezier
+	PluginT.Animated
+	PluginT.Glitch
+	PluginT.Typewriter
+
+Audio filepath:
+	C:\Path\To\Audio.mp3
+
+Data:
+
+	Gen
+	{
+		Name: "BackgroundFizz",
+
+		Plugins
+		{
+			Position: PluginP.Position
+			Text: PluginT.Animated
+		}
+
+		StartBeat: 0
+		EndBeat: 12
+	}
+
+	Gen
+	{
+		Name: "TickerText",
+
+		Plugins
+		{
+			Position: PluginP.Position
+			Text: PluginT.Typewriter
+		},
+
+		StartBeat: 4,
+		EndBeat: 12,
+	},
+
+	Signal
+	{
+		"TickerText",
+		"-s 0.25 -t Example Ticker Text"
+	}
+
+	Signal
+	{
+		"TickerText",
+		"OFF"
+	}
+
+	Gen
+	{
+		Name: "ScreenFlash",
+
+		Plugins
+		{
+			Position: PluginP.Position
+			Text: PluginT.Animated
+		},
+
+		StartBeat: 12,
+		EndBeat: 14,
+	},
+
+	Signal
+	{
+		"ScreenFlash",
+		"-s 0.1 -t #"
+	}
+
+	Signal
+	{
+		"TickerText",
+		"ON"
+	}
+
+	Signal
+	{
+		"TickerText",
+		"-t This is also example text"
+	}
+}
+
+		
