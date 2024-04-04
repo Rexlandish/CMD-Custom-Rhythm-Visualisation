@@ -1,5 +1,7 @@
 ﻿using ASCIIMusicVisualiser8;
 using ASCIIMusicVisualiser8.Effects;
+using ASCIIMusicVisualiser8.Types.Interpolation.Types;
+using ASCIIMusicVisualiser8.Types.Interpolation;
 using NAudio.CoreAudioApi;
 using NAudio.SoundFont;
 using NAudio.Utils;
@@ -27,7 +29,7 @@ namespace ASCIIMusicVisualiser8
         public string audioFilepath;
 
         // Visual data
-        public int updateTimeMilliseconds = 10;
+        public int updateTimeMilliseconds = 1;
         Vector2 dimensions;
 
         bool isActivated = true;
@@ -78,27 +80,70 @@ namespace ASCIIMusicVisualiser8
         public void Run()
         {
             
+
+            bool generatorsExist = false;
+
+            if (activeGenerators.Count > 0)
+            {
+                generatorsExist = true;
+            }
+            Console.WriteLine(generatorsExist);
+
+
+
+            // REMOVE THIS CODE AFTERWARDS
+
+            InterpolationGraph graph = new InterpolationGraph();
+            graph.SetPoints(
+                new List<InterpolationPoint>
+                {
+                    new InterpolationPoint(0, 0, "easeoutelastic"),
+                    new InterpolationPoint(1, 1, "easeoutelastic"),
+                    new InterpolationPoint(2, 2, "easeoutelastic"),
+                    new InterpolationPoint(3, 3, "easeoutelastic"),
+                    new InterpolationPoint(4, 4, "easeoutelastic"),
+                    new InterpolationPoint(5, 3, "easeoutelastic"),
+                    new InterpolationPoint(6, 2, "easeoutelastic"),
+                    new InterpolationPoint(7, 1, "easeoutelastic"),
+                });
+
+            // ---------------------------------------------------
+
+            graph.Print();
+
+            Thread.Sleep(2000);
+
             // Set up audio
             WaveOutEvent waveOutEvent = PlayAudio(audioFilepath);             
             Conductor = new Conductor(BPM);
 
 
+
+
+
             while (isActivated)
             {
-                var currentFrameDisplayBoard = Create2DArray(' ', dimensions);
-                
+                int amount = 20 + (int)Math.Round(30 * graph.GetTime(Conductor.beatsPrecise));
+                Console.WriteLine(RepeatChar('#', amount));
+                //Console.WriteLine($"Value: {graph.GetTime(Conductor.beatsPrecise)}\r");
+
                 // Update conductor with current milliseconds
                 Conductor.SetCurrentTime((long)waveOutEvent.GetPositionTimeSpan().TotalMilliseconds);
 
-                foreach (var generator in activeGenerators)
+                if (generatorsExist)
                 {
-                    DrawLayer(currentFrameDisplayBoard, generator);
-                }
-                string charlistToString = StringifyCharlist(currentFrameDisplayBoard);
+                    var currentFrameDisplayBoard = Create2DArray(' ', dimensions);
+                
+                    foreach (var generator in activeGenerators)
+                    {
+                        DrawLayer(currentFrameDisplayBoard, generator);
+                    }
+                    string charlistToString = StringifyCharlist(currentFrameDisplayBoard);
 
-                Console.WriteLine(charlistToString);
-                Thread.Sleep(updateTimeMilliseconds);
-                GoToTopLeft();
+                    Console.WriteLine(charlistToString);
+                    GoToTopLeft();
+                    Thread.Sleep(updateTimeMilliseconds);
+                }
 
             }
         }

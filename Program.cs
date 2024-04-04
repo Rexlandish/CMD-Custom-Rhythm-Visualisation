@@ -10,6 +10,8 @@ using static ASCIIMusicVisualiser8.Utility;
 using System.Numerics;
 using System.IO;
 using System.IO.Pipes;
+using ASCIIMusicVisualiser8.Types.Interpolation;
+using ASCIIMusicVisualiser8.Types.Interpolation.Types;
 
 namespace ASCIIMusicVisualiser8
 {
@@ -21,10 +23,12 @@ namespace ASCIIMusicVisualiser8
         {
 
 
+
             
             Display display = CreateDisplay();
             display.Run();
             
+
 
             /*
             SwirlingTubes swirlingTubes = new SwirlingTubes();
@@ -38,9 +42,11 @@ namespace ASCIIMusicVisualiser8
             
             Display display = new Display(123, "Audio/Vis.wav", new Vector2(200, 50));
 
+            /*
             Generator swirlingTubesGenerator = new Generator("Tubes", new SwirlingTubes(), 0);
             swirlingTubesGenerator.plugin.pluginAsClass.ProcessParameterString("--size 20,60");
             display.AddGenerator(swirlingTubesGenerator);
+            */
 
             return display;
             

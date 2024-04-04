@@ -33,6 +33,16 @@ namespace ASCIIMusicVisualiser8
             list.ForEach(item => Console.Write(item.ToString() + " "));
         }
 
+        public static string RepeatChar(char c, int times)
+        {
+            string finalString = "";
+            for (int i = 0; i < times; i++)
+            {
+                finalString += c;
+            }
+            return finalString;
+        }
+
         public static List<List<T>> Create2DArray<T>(T fillChar, Vector2 dimensions)
         {
             List<T> row = new List<T>(Enumerable.Repeat(fillChar, (int)dimensions.X).ToList());
@@ -96,6 +106,17 @@ namespace ASCIIMusicVisualiser8
         {
             return (num + 1) / 2;
         }
+
+        public static double Lerp(double a, double b, double t)
+        {
+            return a + (b - a) * t;
+        }
+
+        public static double InverseLerp(double a, double b, double x)
+        {
+            return (x - a) / (b - a);
+        }
+
 
     }
 
