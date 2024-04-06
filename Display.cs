@@ -94,18 +94,64 @@ namespace ASCIIMusicVisualiser8
             // REMOVE THIS CODE AFTERWARDS
 
             InterpolationGraph graph = new InterpolationGraph();
+            string bounceType1 = "easeOut";
+
+            List<double> times = new()
+            {
+                0,
+                0.25,
+                0.5,
+                0.75,
+                1,
+                1.5,
+                2.25,
+                2.5,
+                3,
+                3.25,
+                3.5,
+                3.75
+            };
+
+            List<double> values = new()
+            {
+                0,
+                1,
+                0,
+                0.5,
+                0,
+                1,
+                0,
+                1,
+                0,
+                1,
+                0,
+                1,
+                0
+            };
+
+            List<string> easing = new()
+            {
+                "easeOut",
+                "easeIn",
+                "easeOut",
+                "easeIn",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+
+            };
+
             graph.SetPoints(
-                new List<InterpolationPoint>
-                {
-                    new InterpolationPoint(0, 0, "easeoutelastic"),
-                    new InterpolationPoint(1, 1, "easeoutelastic"),
-                    new InterpolationPoint(2, 2, "easeoutelastic"),
-                    new InterpolationPoint(3, 3, "easeoutelastic"),
-                    new InterpolationPoint(4, 4, "easeoutelastic"),
-                    new InterpolationPoint(5, 3, "easeoutelastic"),
-                    new InterpolationPoint(6, 2, "easeoutelastic"),
-                    new InterpolationPoint(7, 1, "easeoutelastic"),
-                });
+                Utility.RepeatPoints(
+                  Utility.PointsFromLists(times, values, RepeatNTimesToList("linear", times.Count), RepeatNTimesToList(new double[] {2}, times.Count)),
+                  8, 4
+            ));
 
             // ---------------------------------------------------
 
@@ -123,8 +169,8 @@ namespace ASCIIMusicVisualiser8
 
             while (isActivated)
             {
-                int amount = 20 + (int)Math.Round(30 * graph.GetTime(Conductor.beatsPrecise));
-                Console.WriteLine(RepeatChar('#', amount));
+                int amount = (int)Math.Round(30 * graph.GetTime(Conductor.beatsPrecise));
+                Console.WriteLine(RepeatChar('#', amount) + RepeatChar(' ', 30));
                 //Console.WriteLine($"Value: {graph.GetTime(Conductor.beatsPrecise)}\r");
 
                 // Update conductor with current milliseconds
@@ -142,9 +188,8 @@ namespace ASCIIMusicVisualiser8
 
                     Console.WriteLine(charlistToString);
                     GoToTopLeft();
-                    Thread.Sleep(updateTimeMilliseconds);
                 }
-
+                Thread.Sleep(updateTimeMilliseconds);
             }
         }
 

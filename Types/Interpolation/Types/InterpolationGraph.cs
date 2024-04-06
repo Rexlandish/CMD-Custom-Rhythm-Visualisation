@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static ASCIIMusicVisualiser8.Utility;
 
 namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
 {
-    internal class InterpolationGraph
+    internal class InterpolationGraph : IStringable<InterpolationGraph>
     {
         List<InterpolationPoint> points = new();
 
@@ -59,6 +60,23 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
             //Console.WriteLine($"{regionHoldingValue.startTime}, {regionHoldingValue.endTime}");
             double inverseLerpValue = Utility.InverseLerp(regionHoldingValue.startTime, regionHoldingValue.endTime, time);
             return regionHoldingValue.GetValue(inverseLerpValue);
+        }
+
+        public string ExportToString()
+        {
+            List<string> finalString = new();
+
+            foreach (var point in points)
+            {
+                string pointText = ((IStringable<InterpolationPoint>)point).ExportToString();
+                finalString.Add(pointText);
+            }
+            return "[" + string.Join(",", finalString) + "]";
+        }
+
+        public InterpolationPoint ImportFromString(string input)
+        {
+            throw new NotImplementedException(); //! DO THIS NEXT TIME
         }
 
     }

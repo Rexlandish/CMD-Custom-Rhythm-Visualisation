@@ -40,7 +40,7 @@ namespace ASCIIMusicVisualiser8
         public static Display CreateDisplay()
         {
             
-            Display display = new Display(123, "Audio/Vis.wav", new Vector2(200, 50));
+            Display display = new Display(117, "Audio/happyCropped.mp3", new Vector2(200, 50));
 
             /*
             Generator swirlingTubesGenerator = new Generator("Tubes", new SwirlingTubes(), 0);

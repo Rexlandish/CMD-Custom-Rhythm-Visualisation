@@ -1,8 +1,11 @@
-﻿using System;
+﻿using ASCIIMusicVisualiser8.Types.Interpolation;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,9 +13,26 @@ namespace ASCIIMusicVisualiser8
 {
     public class Utility
     {
+
+        public interface IStringable<T>
+        {
+            string ExportToString();
+            T ImportFromString(string input);
+        }
+
         static string RepeatNTimes(string stringToRepeat, int repetitions)
         {
             return string.Concat(System.Linq.Enumerable.Repeat(stringToRepeat, repetitions));
+        }
+
+        public static List<T> RepeatNTimesToList<T>(T obj, int times)
+        {
+            List<T> finalList = new();
+            for (int i = 0; i < times; i++)
+            {
+                finalList.Add(obj);
+            }
+            return finalList;
         }
 
         public static void ClearCurrentConsoleLine()
@@ -101,6 +121,14 @@ namespace ASCIIMusicVisualiser8
             return double.Parse(str);
         }
 
+        public static string ArrayToString<T>(T[] array)
+        {
+            string outputString = "[" + string.Join(",", array) + "]";
+
+            return outputString;
+
+        }
+
         // Remaps -1 1 to 0 1
         public static double Convert_11to01(double num)
         {
@@ -117,6 +145,36 @@ namespace ASCIIMusicVisualiser8
             return (x - a) / (b - a);
         }
 
+        public static List<InterpolationPoint> RepeatPoints(List<InterpolationPoint> points, int repeatAmount, double repeatTime)
+        {
+            List<InterpolationPoint> finalList = new();
+            
+            for (int i = 0; i < repeatAmount; i++)
+            {
+                foreach (var point in points)
+                {
+                    var newPoint = new InterpolationPoint(point.startTime + i * repeatTime, point.startValue, point.interpolationCurveName);
+
+                    finalList.Add(newPoint);
+                }
+            }
+
+            return finalList;
+        }
+
+        public static List<InterpolationPoint> PointsFromLists(List<double> times, List<double> values, List<string> curveNames, List<double[]> curveVariables)
+        {
+
+            List<InterpolationPoint> finalList = new();
+
+            for (int i = 0; i < times.Count; i++)
+            {
+                var newPoint = new InterpolationPoint(times[i], values[i], curveNames[i], curveVariables[i]);
+                finalList.Add(newPoint);
+            }
+
+            return finalList;
+        }
 
     }
 

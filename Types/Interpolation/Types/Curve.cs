@@ -9,17 +9,24 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
 { 
 
     // A library that hands interpolation between points
-    public abstract class InterpolationCurve
+    public abstract class Curve
     {
         // All normalized from 0 to 1
-        public static double GetInterpolation(double t, string name)
+        public static double GetInterpolation(double t, double[] curveVariables, string name)
         {
             switch (name)
             {
+                case "hold":
+                case "":
+                    return 0;
                 case "linear":
                     return Linear(t);
-                case "easeoutelastic":
-                    return EaseOutElastic(t);
+                case "easeOutElastic":
+                    return EaseOutElastic(t, curveVariables);
+                case "easeOut":
+                    return EaseOut(t, curveVariables);
+                case "easeIn":
+                    return EaseIn(t, curveVariables);
                 default:
                     throw new Exception($"Interpolation {name} not found.");
             }
@@ -30,12 +37,28 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             return t;
         }
 
-        static double EaseIn(double t)
+        static double EaseIn(double t, double[] curveVariables)
         {
-            return t;
+            if (curveVariables.Length == 0)
+            {
+                throw new Exception("No curve variables provided!");
+            }
+            double power = curveVariables[0];
+
+            return Math.Pow(t, power);
         }
 
-        static double EaseOutElastic(double t)
+        static double EaseOut(double t, double[] curveVariables)
+        {
+            if (curveVariables.Length == 0)
+            {
+                throw new Exception("No curve variables provided!");
+            }
+            double power = curveVariables[0];
+            return 1 - Math.Pow(1 - t, power);
+        }
+
+        static double EaseOutElastic(double t, double[] curveVariables)
         {
             double c4 = (2 * Math.PI) / 3;
 
@@ -46,7 +69,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
               : Math.Pow(2, -10 * t) * Math.Sin((t * 10 - 0.75) * c4) + 1;
         }
 
-        static double EaseInOutElastic(double t)
+        static double EaseInOutElastic(double t, double[] curveVariables)
         {
             double c5 = (2 * Math.PI) / 4.5;
 
