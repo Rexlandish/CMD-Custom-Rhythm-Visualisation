@@ -90,27 +90,6 @@ namespace ASCIIMusicVisualiser8
             Console.WriteLine(generatorsExist);
 
 
-
-            // REMOVE THIS CODE AFTERWARDS
-
-            InterpolationGraph graph = new InterpolationGraph();
-
-            /*
-            graph.SetPoints(
-                Utility.RepeatPoints(
-                  Utility.PointsFromLists(
-                      times, values, easing, RepeatNTimesToList(new double[] { 3 }, easing.Count)
-                    ),
-                  32, 4
-            ));
-            */
-
-            // ---------------------------------------------------
-
-            graph.Print();
-            Console.WriteLine(graph.ExportToString());
-            Console.ReadLine();
-
             Thread.Sleep(2000);
 
             // Set up audio
@@ -118,13 +97,8 @@ namespace ASCIIMusicVisualiser8
             Conductor = new Conductor(BPM);
 
 
-
-
-
             while (isActivated)
             {
-                double amount = graph.GetTime(Conductor.beatsPrecise);
-                Console.WriteLine(RepeatChar('#', (int)(40 * amount)) + RepeatChar(' ', 40));
                 //Console.WriteLine();
                 //Console.WriteLine($"Value: {graph.GetTime(Conductor.beatsPrecise)}\r");
 

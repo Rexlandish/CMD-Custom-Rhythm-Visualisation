@@ -33,7 +33,7 @@ namespace ASCIIMusicVisualiser8
     interface IPlugin
     {
         //List<PluginParameter> PluginParameters { get; }
-        abstract List<List<char>> Generate(double beat);
+        abstract List<List<char>> Generate(double beat, out char transparentChar);
         string pluginName { get; } // Name of the plugin
         Plugin @class { get; } // Reference to the class the interface is on
         void InitializeParameters(); // Converts string input to data
@@ -53,7 +53,7 @@ namespace ASCIIMusicVisualiser8
             InitializeParameters();
             
             // Check string for flags
-            MatchCollection matches = Regex.Matches(parameterString, @"(--?\w+)\s+(?:[A-Za-z0-9_█#]+([\s█~$&,:;=?@#|'<>.^*()%!]*|(-\d)*)*)+(?!\S)");
+            MatchCollection matches = Regex.Matches(parameterString, @"(--?\w+)\s+(?:([A-Za-z0-9_█#.\s█~$&,:;=?@#|'<>\[\].^*()%!]*|(-\d)*)*)+(?!\S)");
             List<string> splitParameters = new();
             
             foreach (var param in pluginParameters)
@@ -93,7 +93,7 @@ namespace ASCIIMusicVisualiser8
         }
 
         public abstract void Init();
-        public abstract List<List<char>> Generate(double beat);
+        public abstract List<List<char>> Generate(double beat, out char transparentChar);
         public abstract void InitializeParameters();
     }
 

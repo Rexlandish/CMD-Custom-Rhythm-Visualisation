@@ -1,7 +1,9 @@
 ﻿using ASCIIMusicVisualiser8.Effects;
+using ASCIIMusicVisualiser8.Types.Interpolation.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,21 +40,52 @@ namespace ASCIIMusicVisualiser8
         public IPlugin plugin;
         public List<Effect> effects = new List<Effect>();
 
-        public Generator(string generatorName, IPlugin plugin, int layer = 0, List<Effect> effects = null)
+        public InterpolationGraph interpolationGraph;
+
+        public Generator(string generatorName, IPlugin plugin, string isActiveInterpolation = null, int layer = 0, List<Effect> effects = null)
         {
             this.generatorName = generatorName;
             this.plugin = plugin;
             this.layer = layer;
-            this.effects = effects; 
+            this.effects = effects;
+            this.interpolationGraph = new InterpolationGraph(isActiveInterpolation);
+        }
+
+        public Generator(string generatorName, IPlugin plugin, InterpolationGraph isActiveInterpolation, int layer = 0, List<Effect> effects = null)
+        {
+            this.generatorName = generatorName;
+            this.plugin = plugin;
+            this.layer = layer;
+            this.effects = effects;
+            this.interpolationGraph = isActiveInterpolation;
         }
 
         public GeneratorOutput GetOutput(double currentBeat)
         {
+            // if the isActive interpolation graph is larger than 0.5, render the effect output.
+            // Otherwise, return nothing.
 
-            return new GeneratorOutput(
-                plugin.Generate(currentBeat),
-                Vector2.Zero //! ------------------------ ADD A VECTOR GENERATOR OR EFFECT OR ANYTHING HERE
-            );
+            if (interpolationGraph.GetTime(currentBeat) >= 0.5)
+            {
+                List<List<char>> effectOutput = plugin.Generate(currentBeat, out char transparentChar);
+
+                return new GeneratorOutput(
+                    effectOutput,
+                    Vector2.Zero, //! ------------------------ WHEN EFFECTS ARE ADDED, PUT THE EFFECT OUTPUT THROUGH THEM IN THIS FUNCTION AND PUT THE OUTPUT HERE
+                    transparentChar
+                );
+
+            }
+            else
+            {
+                return new GeneratorOutput(
+                    new(),
+                    Vector2.Zero
+                );
+            }
+
+
+            
 
         }
 

@@ -9,7 +9,12 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
 {
     internal class InterpolationGraph : IStringable<InterpolationGraph>
     {
-        List<InterpolationPoint> points = new();
+        public List<InterpolationPoint> points { get; private set; } = new();
+
+        public InterpolationGraph(string stringifiedGraph)
+        {
+            ImportFromString(stringifiedGraph);
+        }
 
         public void SetPoints(List<InterpolationPoint> points)
         {
@@ -40,6 +45,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
 
         public void Print()
         {
+            Console.WriteLine($"startTime -> endTime, startValue -> endValue, curveName, curveParameters");
             foreach (var point in points)
             {
                 string parameterText = point.curveParameters != null ? string.Join(",", point.curveParameters) : "";
@@ -49,10 +55,20 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
 
         public double GetTime(double time)
         {
+            // If there are no variables in the graph, return 1.
+            if (points.Count == 0)
+                return 1.0;
             
+            // If the time is outside the graph, set it to the last value in the graph.
+            if (time > points[points.Count - 1].endTime)
+            {
+                return points[points.Count - 1].endValue;
+            }
+
             // Find what region the value falls into, and calculate the value
             var regionHoldingValue = points.Find(point => point.endTime >= time);
             var regionHoldingIndex = points.FindIndex(point => point.endTime >= time);
+
             if (regionHoldingValue == null)
             {
                 // set it to the last point in points
@@ -80,19 +96,31 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
 
         public InterpolationGraph ImportFromString(string input)
         {
-
-            var interpolationPoints = new List<InterpolationPoint>();
-
-            string[] interpolationPointStrings = input.Split(' ');
-            foreach (string interpolationPointString in interpolationPointStrings)
+            
+            if (input == null)
             {
-                InterpolationPoint point = new(); //! Will this cause an error
-                point.ImportFromString(interpolationPointString);
-                interpolationPoints.Add(point);
+                // Create default interpolation graph of 1
+                points = new List<InterpolationPoint>()
+                {
+                    new InterpolationPoint(0, 0, 1, 1, "hold", new double[0])
+                };
+            }
+            else
+            {
+                var interpolationPoints = new List<InterpolationPoint>();
+
+                string[] interpolationPointStrings = input.Split(' ');
+                foreach (string interpolationPointString in interpolationPointStrings)
+                {
+                    InterpolationPoint point = new(); //! Will this cause an error
+                    point.ImportFromString(interpolationPointString);
+                    interpolationPoints.Add(point);
+                }
+
+                points = interpolationPoints;
+                Initialize();
             }
 
-            points = interpolationPoints;
-            Initialize();
 
             return this;
         }

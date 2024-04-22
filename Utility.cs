@@ -1,4 +1,5 @@
 ﻿using ASCIIMusicVisualiser8.Types.Interpolation;
+using ASCIIMusicVisualiser8.Types.Interpolation.Types;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -142,6 +143,32 @@ namespace ASCIIMusicVisualiser8
 
         }
 
+        public static double[] StringToDoubleArray(string str, bool hasBrackets = true)
+        {
+            if (hasBrackets)
+                str = str.Substring(1, str.Length - 2);
+
+            string[] elementsAsString = str.Split(',');
+            double[] finalArray = new double[elementsAsString.Length];
+
+            for (int i = 0; i < elementsAsString.Length; i++)
+            {
+                finalArray[i] = double.Parse(elementsAsString[i]);
+            }
+
+            return finalArray;
+        }
+
+        public static string[] StringToStringArray(string str, bool hasBrackets = true)
+        {
+            if (hasBrackets)
+                str = str.Substring(1, str.Length - 2);
+
+            string[] elementsAsString = str.Split(',');
+
+            return elementsAsString;
+        }
+
         // Remaps -1 1 to 0 1
         public static double Convert_11to01(double num)
         {
@@ -156,6 +183,15 @@ namespace ASCIIMusicVisualiser8
         public static double InverseLerp(double a, double b, double x)
         {
             return (x - a) / (b - a);
+        }
+
+        public static string RepeatPoints(string interpolationPointsGraph, int repeatAmount, double repeatTime)
+        {
+            InterpolationGraph graph = new InterpolationGraph(interpolationPointsGraph);
+            var repeatedPoints = RepeatPoints(graph.points, repeatAmount, repeatTime);
+            graph.SetPoints(repeatedPoints);
+            return graph.ExportToString();
+
         }
 
         public static List<InterpolationPoint> RepeatPoints(List<InterpolationPoint> points, int repeatAmount, double repeatTime)

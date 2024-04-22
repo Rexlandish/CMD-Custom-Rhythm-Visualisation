@@ -60,7 +60,7 @@ namespace ASCIIMusicVisualiser8
             return (Math.Sin(value) + 1)/2;
         }
 
-        public override List<List<char>> Generate(double beat)
+        public override List<List<char>> Generate(double beat, out char transparentChar)
         {
             //size = new Vector2(60, 5);
             var finalArray = Utility.Create2DArray(' ', size);
@@ -99,6 +99,7 @@ namespace ASCIIMusicVisualiser8
                 }
             }
 
+            transparentChar = ' ';
             return finalArray;
         }
 
