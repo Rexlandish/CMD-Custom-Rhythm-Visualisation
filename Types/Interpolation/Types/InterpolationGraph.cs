@@ -75,12 +75,26 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
                 string pointText = ((IStringable<InterpolationPoint>)point).ExportToString();
                 finalString.Add(pointText);
             }
-            return "[" + string.Join(",", finalString) + "]";
+            return string.Join(" ", finalString);
         }
 
         public InterpolationGraph ImportFromString(string input)
         {
-            throw new NotImplementedException(); //! DO THIS NEXT TIME
+
+            var interpolationPoints = new List<InterpolationPoint>();
+
+            string[] interpolationPointStrings = input.Split(' ');
+            foreach (string interpolationPointString in interpolationPointStrings)
+            {
+                InterpolationPoint point = new(); //! Will this cause an error
+                point.ImportFromString(interpolationPointString);
+                interpolationPoints.Add(point);
+            }
+
+            points = interpolationPoints;
+            Initialize();
+
+            return this;
         }
 
     }

@@ -55,15 +55,62 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             this.curveParameters = curveParameters;
         }
 
+        public InterpolationPoint()
+        {
+            this.startTime = double.NaN;
+            this.startValue = double.NaN;
+            this.endTime = double.NaN;
+            this.endValue = double.NaN;
+            this.interpolationCurveName = "";
+            this.curveParameters = new double[0] { };
+        }
+
         public string ExportToString()
         {
-            string outputString = $"{startTime},{startValue}:{endTime},{endValue}:{interpolationCurveName},{Utility.ArrayToString(curveParameters)}";
+            string outputString = $"{startTime}>{endTime};{startValue}>{endValue};{interpolationCurveName};{Utility.ArrayToString(curveParameters)}";
             return outputString;
         }
 
         public InterpolationPoint ImportFromString(string input)
         {
-            throw new NotImplementedException(); //! DO THIS NEXT TIME
+            // 0>1;0>0.5;linear;[2,3]
+            // 1>2;0.5>1;linear;[]
+            // 2>3;1>1;linear;[]
+            string[] parameters = input.Split(';');
+
+            // Time
+            string[] times = parameters[0].Split('>');
+            startTime = float.Parse(times[0]);
+            endTime = float.Parse(times[1]);
+
+            // Values
+            string[] values = parameters[1].Split('>');
+            startValue = float.Parse(values[0]);
+            endValue = float.Parse(values[1]);
+
+            // Interpolation curve
+            interpolationCurveName = parameters[2];
+
+            // Curve parameters.
+            // If no variables given, put in a blank array. Otherwise, parse it.
+            if (parameters[3] == "[]")
+            {
+                curveParameters = new double[0] { };
+            }
+            else
+            {
+                string curveParametersString = parameters[3].Substring(1, parameters[3].Length - 2); // Ignore first and last characters
+                List<double> curveParameterList = new();
+                foreach (string value in curveParametersString.Split(','))
+                {
+                    curveParameterList.Add(double.Parse(value));
+                }
+
+                curveParameters = curveParameterList.ToArray();
+            }
+
+            return this;
+
         }
 
 

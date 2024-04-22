@@ -94,74 +94,8 @@ namespace ASCIIMusicVisualiser8
             // REMOVE THIS CODE AFTERWARDS
 
             InterpolationGraph graph = new InterpolationGraph();
-            List<double> times = new()
-            {
 
-                0,
-                0.75,
-                1.5,
-                2.5,
-                2.75
-
-
-
-            };
-
-            List<double> values = new()
-            {
-                
-               1,
-
-            };
-
-            List<string> easing = new()
-            {
-                "hold",
-                "hold",
-                "hold",
-                "hold",
-                "hold",
-                "hold",
-                "easeIn",
-                "hold",
-                "hold",
-                "hold",
-                "hold",
-                "hold",
-                "hold",
-                "hold", "hold",
-                "hold", "hold",
-                "hold", "hold",
-                "hold", "hold",
-                "hold", "hold",
-                "hold", "hold",
-                "hold", "hold",
-                "hold", "hold",
-                "hold", "hold",
-                "hold", "hold",
-                "hold", "hold",
-                "hold", "hold",
-                "hold", "hold"
-            };
-
-            List<double[]> parameters = new()
-            {
-                new double[] {0},
-                new double[] {0},
-                new double[] {0},
-                new double[] {0},
-                new double[] {0},
-                new double[] {0},
-                new double[] {3},
-                new double[] {0},
-                new double[] {0},
-                new double[] {0},
-                new double[] {0},
-                new double[] {0},
-                new double[] {0},
-                new double[] {0},
-                new double[] {0}
-            };
+            /*
             graph.SetPoints(
                 Utility.RepeatPoints(
                   Utility.PointsFromLists(
@@ -169,6 +103,7 @@ namespace ASCIIMusicVisualiser8
                     ),
                   32, 4
             ));
+            */
 
             // ---------------------------------------------------
 

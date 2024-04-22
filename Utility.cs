@@ -132,9 +132,11 @@ namespace ASCIIMusicVisualiser8
             return double.Parse(str);
         }
 
-        public static string ArrayToString<T>(T[] array)
+        public static string ArrayToString<T>(T[] array, bool hasBrackets = true)
         {
-            string outputString = "[" + string.Join(",", array) + "]";
+            string outputString =
+                hasBrackets ? "[" + string.Join(",", array) + "]"
+                : string.Join(",", array);
 
             return outputString;
 
