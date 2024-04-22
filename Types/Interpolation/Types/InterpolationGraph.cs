@@ -42,7 +42,8 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
         {
             foreach (var point in points)
             {
-                Console.WriteLine($"{point.startTime} -> {point.endTime}, {point.startValue} -> {point.endValue}, {point.interpolationCurveName}");
+                string parameterText = point.curveParameters != null ? string.Join(",", point.curveParameters) : "";
+                Console.WriteLine($"{point.startTime} -> {point.endTime}, {point.startValue} -> {point.endValue}, {point.interpolationCurveName}, {parameterText}");
             }
         }
 
@@ -51,6 +52,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
             
             // Find what region the value falls into, and calculate the value
             var regionHoldingValue = points.Find(point => point.endTime >= time);
+            var regionHoldingIndex = points.FindIndex(point => point.endTime >= time);
             if (regionHoldingValue == null)
             {
                 // set it to the last point in points
@@ -58,7 +60,9 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
             }
 
             //Console.WriteLine($"{regionHoldingValue.startTime}, {regionHoldingValue.endTime}");
+            // How far the time is between the two points
             double inverseLerpValue = Utility.InverseLerp(regionHoldingValue.startTime, regionHoldingValue.endTime, time);
+
             return regionHoldingValue.GetValue(inverseLerpValue);
         }
 
@@ -74,7 +78,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
             return "[" + string.Join(",", finalString) + "]";
         }
 
-        public InterpolationPoint ImportFromString(string input)
+        public InterpolationGraph ImportFromString(string input)
         {
             throw new NotImplementedException(); //! DO THIS NEXT TIME
         }

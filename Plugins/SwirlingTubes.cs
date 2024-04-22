@@ -40,15 +40,9 @@ namespace ASCIIMusicVisualiser8
 
         public override void Init()
         {
-            
-            foreach (var parameter in pluginParameters)
-            {
-                Console.WriteLine($"{parameter.parameterName} {parameter.givenUserParameter}");
-            }
 
             string[] vector = GetPluginParameter("size").givenUserParameter.Split(',');
-            Console.WriteLine(vector[0]);
-            Console.WriteLine(vector[1]);
+
 
             size = new Vector2(
                 float.Parse(vector[0]),

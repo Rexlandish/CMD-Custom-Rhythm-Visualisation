@@ -38,7 +38,7 @@ namespace ASCIIMusicVisualiser8
         public IPlugin plugin;
         public List<Effect> effects = new List<Effect>();
 
-        public Generator(string generatorName, IPlugin plugin, int layer, List<Effect> effects = null)
+        public Generator(string generatorName, IPlugin plugin, int layer = 0, List<Effect> effects = null)
         {
             this.generatorName = generatorName;
             this.plugin = plugin;

@@ -35,8 +35,8 @@ namespace ASCIIMusicVisualiser8
         //List<PluginParameter> PluginParameters { get; }
         abstract List<List<char>> Generate(double beat);
         string pluginName { get; } // Name of the plugin
-        Plugin pluginAsClass { get; }
-        void InitializeParameters();
+        Plugin @class { get; } // Reference to the class the interface is on
+        void InitializeParameters(); // Converts string input to data
     }
 
 
@@ -45,7 +45,7 @@ namespace ASCIIMusicVisualiser8
 
         protected List<PluginParameter> pluginParameters;
         public abstract string pluginName { get; }
-        public Plugin pluginAsClass => this;
+        public Plugin @class => this;
 
         public void ProcessParameterString(string parameterString)
         {

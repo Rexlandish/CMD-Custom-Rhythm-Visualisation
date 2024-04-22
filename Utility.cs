@@ -35,6 +35,17 @@ namespace ASCIIMusicVisualiser8
             return finalList;
         }
 
+        public static T[] RepeatNTimesToArray<T>(T obj, int times)
+        {
+            T[] finalArray = new T[times];
+
+            for (int i = 0; i < times; i++)
+            {
+                finalArray[i] = obj;
+            }
+            return finalArray;
+        }
+
         public static void ClearCurrentConsoleLine()
         {
             int currentLineCursor = Console.CursorTop;
@@ -153,7 +164,7 @@ namespace ASCIIMusicVisualiser8
             {
                 foreach (var point in points)
                 {
-                    var newPoint = new InterpolationPoint(point.startTime + i * repeatTime, point.startValue, point.interpolationCurveName);
+                    var newPoint = new InterpolationPoint(point.startTime + i * repeatTime, point.startValue, point.interpolationCurveName, point.curveParameters);
 
                     finalList.Add(newPoint);
                 }
@@ -166,10 +177,20 @@ namespace ASCIIMusicVisualiser8
         {
 
             List<InterpolationPoint> finalList = new();
+            foreach (var parameter in curveVariables)
+            {
+                Console.WriteLine(string.Join(",", parameter));
+            }
 
             for (int i = 0; i < times.Count; i++)
             {
                 var newPoint = new InterpolationPoint(times[i], values[i], curveNames[i], curveVariables[i]);
+                
+                foreach (var parameter in newPoint.curveParameters)
+                {
+                    Console.WriteLine(string.Join(",", parameter));
+                }
+
                 finalList.Add(newPoint);
             }
 

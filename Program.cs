@@ -1,17 +1,4 @@
-﻿using NAudio.Utils;
-using NAudio.Wave;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using static ASCIIMusicVisualiser8.Utility;
-using System.Numerics;
-using System.IO;
-using System.IO.Pipes;
-using ASCIIMusicVisualiser8.Types.Interpolation;
-using ASCIIMusicVisualiser8.Types.Interpolation.Types;
+﻿using System.Numerics;
 
 namespace ASCIIMusicVisualiser8
 {
@@ -40,13 +27,11 @@ namespace ASCIIMusicVisualiser8
         public static Display CreateDisplay()
         {
             
-            Display display = new Display(117, "Audio/happyCropped.mp3", new Vector2(200, 50));
+            Display display = new Display(160, "Audio/Master.mp3", new Vector2(200, 50));
 
-            /*
-            Generator swirlingTubesGenerator = new Generator("Tubes", new SwirlingTubes(), 0);
-            swirlingTubesGenerator.plugin.pluginAsClass.ProcessParameterString("--size 20,60");
-            display.AddGenerator(swirlingTubesGenerator);
-            */
+            Generator swirlingTubesGenerator = new Generator("Tubes", new SwirlingTubes());
+            swirlingTubesGenerator.plugin.@class.ProcessParameterString("--size 20,60");
+            //display.AddGenerator(swirlingTubesGenerator);
 
             return display;
             

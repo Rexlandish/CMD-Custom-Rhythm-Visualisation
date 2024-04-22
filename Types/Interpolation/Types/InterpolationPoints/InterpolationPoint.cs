@@ -31,31 +31,33 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
         protected string endValue;
         */
         public string interpolationCurveName { get; private set; }
-        public double[] curveVariable { get; private set; }
+        public double[] curveParameters { get; private set; }
 
-        public InterpolationPoint(double startTime, double endTime, double startValue, double endValue, string interpolationCurveName, double[] curveVariable = null)
+        public InterpolationPoint(double startTime, double endTime, double startValue, double endValue, string interpolationCurveName, double[] curveParameters)
         {
             this.startTime = startTime;
             this.endTime = endTime;
             this.startValue = startValue;
             this.endValue = endValue;
             this.interpolationCurveName = interpolationCurveName;
-            this.curveVariable = curveVariable;
+            Console.WriteLine($"I have been given {curveParameters.Length} parameters");
+            this.curveParameters = curveParameters;
         }
 
-        public InterpolationPoint(double startTime, double startValue, string interpolationCurveName, double[] curveVariable = null)
+        public InterpolationPoint(double startTime, double startValue, string interpolationCurveName, double[] curveParameters)
         {
             this.startTime = startTime;
             this.startValue = startValue;
             this.endTime = double.NaN;
             this.endValue = double.NaN;
+            Console.WriteLine($"I have been given parameters? {curveParameters == null}");
             this.interpolationCurveName = interpolationCurveName;
-            this.curveVariable = curveVariable;
+            this.curveParameters = curveParameters;
         }
 
         public string ExportToString()
         {
-            string outputString = $"{startTime},{startValue}:{endTime},{endValue}:{interpolationCurveName},{Utility.ArrayToString(curveVariable)}";
+            string outputString = $"{startTime},{startValue}:{endTime},{endValue}:{interpolationCurveName},{Utility.ArrayToString(curveParameters)}";
             return outputString;
         }
 
@@ -87,8 +89,8 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
 
         public double GetValue(double interpolationCurveAmount) // From 0 to 1
         {
-            double newInterpolationCurveAmount = Curve.GetInterpolation(interpolationCurveAmount, curveVariable, interpolationCurveName);
-            return Utility.InverseLerp(startValue, endValue, newInterpolationCurveAmount);
+            double newInterpolationCurveAmount = Curve.GetInterpolation(interpolationCurveAmount, curveParameters, interpolationCurveName);
+            return Utility.Lerp(startValue, endValue, newInterpolationCurveAmount);
         }
 
 
