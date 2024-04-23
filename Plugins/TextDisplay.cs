@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ASCIIMusicVisualiser8.Types.Interpolation.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -15,16 +16,26 @@ namespace ASCIIMusicVisualiser8.Plugins
 
         string[] words;
         Vector2[] positions;
+        InterpolationGraph positionInterpolation;
 
         public override List<List<char>> Generate(double beat, out char transparentChar)
         {
-            throw new NotImplementedException();
+            int index = (int)Math.Floor(positionInterpolation.GetTime(beat));
+            string wordToDisplayAsString = words[index];
+            List<char> wordToDisplayAsCharArray = new List<char>(wordToDisplayAsString.ToCharArray());
+            transparentChar = new char();
+
+            return Utility.RepeatNTimesToList(wordToDisplayAsCharArray, 8);
+            
+            
         }
 
         public override void Init()
         {
-            string[] allWords = Utility.StringToStringArray(GetPluginParameter("words").givenUserParameter);
-            
+            Console.WriteLine(GetPluginParameter("words").givenUserParameter);
+            words = Utility.StringToStringArray(GetPluginParameter("words").givenUserParameter, false);
+            Console.WriteLine(Utility.ArrayToString(words));
+            positionInterpolation = new InterpolationGraph(GetPluginParameter("wordsInterpolation").givenUserParameter);
         }
 
         public override void InitializeParameters()
@@ -33,10 +44,7 @@ namespace ASCIIMusicVisualiser8.Plugins
             new List<PluginParameter>()
             {
                 new PluginParameter("words", new string[] {"--words", "-w"}, ""),
-
-                // 10,0 10,10 0,10 0,0
-                new PluginParameter("positions", new string[] {"--positions", "-p"}, "")
-
+                new PluginParameter("wordsInterpolation", new string[] {"--wordsInterpolation", "-wI"}, ""),
             };
         }
     }

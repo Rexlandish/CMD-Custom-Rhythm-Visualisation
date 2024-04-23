@@ -29,7 +29,7 @@ namespace ASCIIMusicVisualiser8
         public string audioFilepath;
 
         // Visual data
-        public int updateTimeMilliseconds = 1;
+        public int updateTimeMilliseconds = 2;
         Vector2 dimensions;
 
         bool isActivated = true;
@@ -90,7 +90,7 @@ namespace ASCIIMusicVisualiser8
             Console.WriteLine(generatorsExist);
 
 
-            Thread.Sleep(2000);
+            //Thread.Sleep(2000);
 
             // Set up audio
             WaveOutEvent waveOutEvent = PlayAudio(audioFilepath);             
@@ -118,7 +118,7 @@ namespace ASCIIMusicVisualiser8
                     Console.WriteLine(charlistToString);
                     GoToTopLeft();
                 }
-                //if (updateTimeMilliseconds != 0) Thread.Sleep(updateTimeMilliseconds);
+                Thread.Sleep(updateTimeMilliseconds);
             }
         }
 
