@@ -1,22 +1,12 @@
-﻿using ASCIIMusicVisualiser8;
-using ASCIIMusicVisualiser8.Effects;
-using ASCIIMusicVisualiser8.Types.Interpolation.Types;
-using ASCIIMusicVisualiser8.Types.Interpolation;
-using NAudio.CoreAudioApi;
-using NAudio.SoundFont;
-using NAudio.Utils;
+﻿using NAudio.Utils;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Numerics;
-using System.Reflection.Emit;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using static ASCIIMusicVisualiser8.Utility;
+using static ASCIIMusicVisualiser8.Utility.ConsoleOp;
+using static ASCIIMusicVisualiser8.Utility.Conversion;
+using static ASCIIMusicVisualiser8.Utility.Creation;
 
 namespace ASCIIMusicVisualiser8
 {

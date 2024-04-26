@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using static ASCIIMusicVisualiser8.Utility;
+using static ASCIIMusicVisualiser8.Utility.Creation;
 
 namespace ASCIIMusicVisualiser8
 {
@@ -62,7 +58,7 @@ namespace ASCIIMusicVisualiser8
         public override List<List<char>> Generate(double beat, out char transparentChar)
         {
             //size = new Vector2(60, 5);
-            var finalArray = Utility.Create2DArray(' ', size);
+            var finalArray = Create2DArray(' ', size);
 
             double scrollspeedX = 1;
             double scrollspeedY = -2;

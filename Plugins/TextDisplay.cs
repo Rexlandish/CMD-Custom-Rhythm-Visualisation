@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+using static ASCIIMusicVisualiser8.Utility.Repeat;
+using static ASCIIMusicVisualiser8.Utility.Conversion;
 
 namespace ASCIIMusicVisualiser8.Plugins
 {
@@ -14,27 +14,54 @@ namespace ASCIIMusicVisualiser8.Plugins
 
         public override string pluginName => "TextDisplay";
 
-        string[] words;
+        // A list of phrases, made up of a list of sentences split by line breaks
+        List<List<string>> phraseFrames = new();
         Vector2[] positions;
         InterpolationGraph positionInterpolation;
 
         public override List<List<char>> Generate(double beat, out char transparentChar)
         {
+            // Get current interpolation from beat
             int index = (int)Math.Floor(positionInterpolation.GetTime(beat));
-            string wordToDisplayAsString = words[index];
-            List<char> wordToDisplayAsCharArray = new List<char>(wordToDisplayAsString.ToCharArray());
-            transparentChar = new char();
 
-            return Utility.RepeatNTimesToList(wordToDisplayAsCharArray, 8);
+
+            // Render all text for now
+            List<List<char>> wordsToRender = new();
+            List<string> phrase = phraseFrames[index];
+
+            // This function gets the longest item in the list and returns it's length
+            int longestPhraseLength = phrase.Aggregate("", (max, cur) => max.Length > cur.Length ? max : cur).Length;
+
+            foreach (string word in phrase)
+            {
+                int paddingAmount = longestPhraseLength - word.Length;
+
+                List<char> wordToCharList = new(word.ToArray());
+                wordToCharList.AddRange(RepeatNTimesToList(' ', paddingAmount));
+                wordsToRender.Add(wordToCharList);
+            }
+
+            // Debug, show index of current phrase
+            //wordsToRender.Add(new (index.ToString().ToCharArray()));
+            transparentChar = new char();
+            //transparentChar = '*';
+
+            return wordsToRender;
             
             
         }
 
         public override void Init()
         {
-            Console.WriteLine(GetPluginParameter("words").givenUserParameter);
-            words = Utility.StringToStringArray(GetPluginParameter("words").givenUserParameter, false);
-            Console.WriteLine(Utility.ArrayToString(words));
+            // "abc,abc\ndef,abc\ndef\nghi"
+            string[] wordsList = StringToStringArray(GetPluginParameter("words").givenUserParameter, false, '_');
+            
+            foreach (string phrase in wordsList)
+            {
+                Console.WriteLine($"Initializing with {string.Join(",",phrase.Split('\n'))}");
+                phraseFrames.Add(new(phrase.Split('\n')));
+            }
+
             positionInterpolation = new InterpolationGraph(GetPluginParameter("wordsInterpolation").givenUserParameter);
         }
 

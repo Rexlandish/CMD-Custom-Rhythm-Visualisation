@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static ASCIIMusicVisualiser8.Utility;
+using static ASCIIMusicVisualiser8.Utility.Maths;
+using static ASCIIMusicVisualiser8.Utility.Conversion;
 
 namespace ASCIIMusicVisualiser8.Types.Interpolation
 {
@@ -67,7 +66,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
 
         public string ExportToString()
         {
-            string outputString = $"{startTime}>{endTime};{startValue}>{endValue};{interpolationCurveName};{Utility.ArrayToString(curveParameters)}";
+            string outputString = $"{startTime}>{endTime};{startValue}>{endValue};{interpolationCurveName};{ArrayToString(curveParameters)}";
             return outputString;
         }
 
@@ -156,7 +155,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
         public double GetValue(double interpolationCurveAmount) // From 0 to 1
         {
             double newInterpolationCurveAmount = Curve.GetInterpolation(interpolationCurveAmount, curveParameters, interpolationCurveName);
-            return Utility.Lerp(startValue, endValue, newInterpolationCurveAmount);
+            return Lerp(startValue, endValue, newInterpolationCurveAmount);
         }
 
 

@@ -5,13 +5,13 @@ using static ASCIIMusicVisualiser8.Utility.Creation;
 
 namespace ASCIIMusicVisualiser8
 {
-    public class SwirlingTubes : Plugin, IPlugin
+    public class ShaderPluginBoilerplate : Plugin, IPlugin
     {
 
         public override string pluginName {get => "Swirling Tubes"; }
 
         Vector2 size;
-        string charShadeString = " .:-=+*#%@";
+        string charShadeString = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
         //" 123456789";
         // " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"
 
@@ -34,6 +34,58 @@ namespace ASCIIMusicVisualiser8
             };
         }
 
+
+        float step(float edge, float x)
+        {
+            return x > edge ? 1 : 0;
+        }
+
+        float clamp(float x, float min, float max)
+        {
+            return
+                x < min ? min
+                :
+                x > max ? max
+                :
+                x;
+        }
+
+        float atan(float y, float x)
+        {
+            return (float)Math.Atan2(y, x);
+        }
+
+        float cos(float x)
+        {
+            return (float)Math.Cos(x);
+        }
+
+        float sin(float x)
+        {
+            return (float)Math.Sin(x);
+        }
+
+        float abs(float x)
+        {
+            return (float)Math.Abs(x);
+        }
+
+        float max(float x, float y)
+        {
+            return x > y ? x : y;
+        }
+
+        float length(Vector2 v)
+        {
+            return (float)v.Length();
+        }
+
+        float pow(float x, float y)
+        {
+            return (float)Math.Pow(x, y);
+        }
+
+
         public override void Init()
         {
 
@@ -51,22 +103,10 @@ namespace ASCIIMusicVisualiser8
             
         }
 
-        public double Sin01(double value)
-        {
-            return (Math.Sin(value) + 1)/2;
-        }
-
         public override List<List<char>> Generate(double beat, out char transparentChar)
         {
             //size = new Vector2(60, 5);
             var finalArray = Create2DArray(' ', size);
-
-            double opacity;
-
-            double swirliness = 8; // Character span
-            double swirlDensity = 16; // Character span
-            double tubeSpacing = 6; // i.e. Tube size
-            double swirlSpeed = 4; // Horizontal movement
 
             for (int i = 0; i < size.Y; i++)
             {
@@ -77,32 +117,20 @@ namespace ASCIIMusicVisualiser8
 
                     double _i = i;
                     double _j = j;
+                    double opacity = 0;
 
-                    // Scrolling
-                    _j += beat*8;
+                    /*
+                     * 
+                     * YOUR CODE HERE
+                     * 
+                     */
 
-
-                    double wibbleAmount = Math.Cos(beat * Math.PI * 0.25);
-
-                    double asidenessSin = swirliness * Sin01(wibbleAmount * Math.Sin(Math.PI * ((swirlSpeed * beat + _i ) / swirlDensity)));
-                    double asidenessCos = swirliness * Sin01(wibbleAmount * Math.Cos(Math.PI * ((swirlSpeed * beat + _i ) / swirlDensity)));
-
-                    double currentDensity =
-                        Math.Sin((_j / tubeSpacing)  - asidenessSin) * (asidenessCos * 0.2);
-
-
-                    finalArray[i][j] = GetCharFromDensity(currentDensity);
+                    finalArray[i][j] = GetCharFromDensity(opacity);
                 }
             }
 
             transparentChar = ' ';
             return finalArray;
-        }
-
-        double HarshSin(double value)
-        {
-            float a = 0.5f;
-            return Math.Sin(value) / (Math.Sqrt(a * a + Math.Sin(value) * Math.Sin(value)));
         }
 
         char GetCharFromDensity(double density)

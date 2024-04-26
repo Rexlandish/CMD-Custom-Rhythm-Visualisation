@@ -1,11 +1,7 @@
 ﻿using ASCIIMusicVisualiser8.Types.Interpolation.Types;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using static ASCIIMusicVisualiser8.Utility.Creation;
 
 namespace ASCIIMusicVisualiser8.Plugins
 {
@@ -32,7 +28,7 @@ namespace ASCIIMusicVisualiser8.Plugins
             };
             */
             
-            List<List<char>> finalArray = Utility.Create2DArray(character, new((int)size, (int)size));
+            List<List<char>> finalArray = Create2DArray(character, new((int)size, (int)size));
             
 
             transparentChar = ' ';

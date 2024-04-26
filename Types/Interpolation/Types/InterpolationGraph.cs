@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static ASCIIMusicVisualiser8.Utility;
+using static ASCIIMusicVisualiser8.Utility.Maths;
 
 namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
 {
@@ -77,7 +75,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
 
             //Console.WriteLine($"{regionHoldingValue.startTime}, {regionHoldingValue.endTime}");
             // How far the time is between the two points
-            double inverseLerpValue = Utility.InverseLerp(regionHoldingValue.startTime, regionHoldingValue.endTime, time);
+            double inverseLerpValue = InverseLerp(regionHoldingValue.startTime, regionHoldingValue.endTime, time);
 
             return regionHoldingValue.GetValue(inverseLerpValue);
         }
