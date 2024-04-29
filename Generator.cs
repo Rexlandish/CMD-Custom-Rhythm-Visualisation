@@ -1,5 +1,6 @@
 ﻿using ASCIIMusicVisualiser8.Effects;
 using ASCIIMusicVisualiser8.Types.Interpolation.Types;
+using NAudio.CoreAudioApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace ASCIIMusicVisualiser8
         public int layer = 0;
 
         public IPlugin plugin;
-        public List<Effect> effects = new List<Effect>();
+        public List<Effect> effects = new List<Effect>() { };
 
         public InterpolationGraph interpolationGraph;
 
@@ -47,7 +48,7 @@ namespace ASCIIMusicVisualiser8
             this.generatorName = generatorName;
             this.plugin = plugin;
             this.layer = layer;
-            this.effects = effects;
+            this.effects = effects ?? new List<Effect>();
             this.interpolationGraph = new InterpolationGraph(isActiveInterpolation);
         }
 
@@ -56,7 +57,7 @@ namespace ASCIIMusicVisualiser8
             this.generatorName = generatorName;
             this.plugin = plugin;
             this.layer = layer;
-            this.effects = effects;
+            this.effects = effects ?? new List<Effect>();
             this.interpolationGraph = isActiveInterpolation;
         }
 
@@ -69,10 +70,16 @@ namespace ASCIIMusicVisualiser8
             {
                 List<List<char>> effectOutput = plugin.Generate(currentBeat, out char transparentChar);
 
+                char newTransparentChar = new char();
+                foreach (Effect effect in effects)
+                {
+                    effectOutput = effect.ApplyTo(effectOutput, currentBeat, transparentChar, out newTransparentChar);
+                }
+
                 return new GeneratorOutput(
                     effectOutput,
                     Vector2.Zero, //! ------------------------ WHEN EFFECTS ARE ADDED, PUT THE EFFECT OUTPUT THROUGH THEM IN THIS FUNCTION AND PUT THE OUTPUT HERE
-                    transparentChar
+                    newTransparentChar
                 );
 
             }
@@ -88,6 +95,17 @@ namespace ASCIIMusicVisualiser8
             
 
         }
+
+        public void SetPlugin(IPlugin plugin)
+        {
+            this.plugin = plugin;
+        }
+
+        public void AddEffect(Effect effect)
+        {
+            effects.Add(effect);
+        }
+
 
         public override string ToString()
         {

@@ -271,6 +271,19 @@ namespace ASCIIMusicVisualiser8
             {
                 return (x - a) / (b - a);
             }
+
+            public static double Clamp(double value, double min, double max)
+            {
+                return 
+                    value < min ? min
+                    : value > max ? max
+                    : value;
+            }
+
+            public static double Repeat(double t, double length)
+            {
+                return Clamp(t - Math.Floor(t / length) * length, 0, length);
+            }
         }
 
 

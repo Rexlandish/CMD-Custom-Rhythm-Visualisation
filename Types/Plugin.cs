@@ -40,61 +40,27 @@ namespace ASCIIMusicVisualiser8
     }
 
 
-    public abstract class Plugin : IPlugin
+    public abstract class Plugin : ParameterProcessor, IPlugin
     {
 
-        protected List<PluginParameter> pluginParameters;
+        
         public abstract string pluginName { get; }
         public Plugin @class => this;
 
-        public void ProcessParameterString(string parameterString)
+        public void ProcessParameterStringPlugin(string parameterString)
         {
-
-            InitializeParameters();
-            
-            // Check string for flags
-            MatchCollection matches = Regex.Matches(parameterString, @"(--?\w+)\s+(?:([A-Za-z0-9_█#.\s█~$&,:;=?@#|'<>\[\].^*()%!]*|(-\d)*)*)+(?!\S)");
-            List<string> splitParameters = new();
-            
-            foreach (var param in pluginParameters)
-            {
-                Console.WriteLine($"{param.parameterName} {param.givenUserParameter}");
-            }
-
-            // Extract flags and load into plugin
-            for (int i = 0; i < matches.Count; i++)
-            {
-                string subparameter = matches[i].Value;
-                int placeToSplit = subparameter.IndexOf(" ");
-
-                string flag = subparameter.Substring(0, placeToSplit);
-                string obj = subparameter.Substring(placeToSplit + 1, subparameter.Length - placeToSplit - 1);
-
-
-                var specifiedPluginParameter = pluginParameters.Find((PluginParameters) => PluginParameters.parameterFlags.Contains(flag));
-                if (specifiedPluginParameter == null)
-                {
-                    throw new Exception($"No parameter with flag {flag} was found in Plugin {this}!");
-                }
-
-                specifiedPluginParameter.SetValue(obj);
-                Console.WriteLine($"{specifiedPluginParameter.parameterName} {specifiedPluginParameter.givenUserParameter}");
-
-
-                // !------------------ THIS ASSIGNS TO THE BASE CLASS??
-
-            }
+            InitializeParameters();            
+            // Parse 
+            ProcessParameterString(parameterString);
             Init();
         }
 
-        protected PluginParameter GetPluginParameter(string parameterName)
-        {
-            return pluginParameters.Find((param) => param.parameterName == parameterName);
-        }
 
-        public abstract void Init();
         public abstract List<List<char>> Generate(double beat, out char transparentChar);
-        public abstract void InitializeParameters();
+        
+
+        // Parse string input into parameter types
+        public abstract void Init();
     }
 
 }

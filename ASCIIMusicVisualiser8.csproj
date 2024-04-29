@@ -78,7 +78,9 @@
     <Compile Include="Conductor.cs" />
     <Compile Include="Display.cs" />
     <Compile Include="Effects\Effect.cs" />
+    <Compile Include="Effects\Loop.cs" />
     <Compile Include="Generator.cs" />
+    <Compile Include="ParameterProcessor.cs" />
     <Compile Include="Plugins\Noise.cs" />
     <Compile Include="Plugins\ShaderPluginBoilerplate - Copy.cs" />
     <Compile Include="Plugins\ShaderTest.cs" />

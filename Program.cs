@@ -5,6 +5,7 @@ using static ASCIIMusicVisualiser8.Utility.Repeat;
 using static ASCIIMusicVisualiser8.Utility.Conversion;
 using System.Collections.Generic;
 using ASCIIMusicVisualiser8.Types.Interpolation.Types;
+using ASCIIMusicVisualiser8.Effects;
 
 namespace ASCIIMusicVisualiser8
 {
@@ -25,8 +26,8 @@ namespace ASCIIMusicVisualiser8
             */
 
 
-
-            Display display = CreateDigitalDirectionsDisplay();
+            Display display = CreateEffectTestDisplay();
+            //Display display = CreateDigitalDirectionsDisplay();
             //Display display = CreateCatDisplay();
             Console.ReadLine();
             display.Run();
@@ -41,13 +42,49 @@ namespace ASCIIMusicVisualiser8
 
         }
 
+        public static Display CreateEffectTestDisplay()
+        {
+
+            Display display = new(100, "Audio/Disconnected.mp3", new Vector2(100, 100));
+            
+            Generator text = new Generator("Lyrics", new TextDisplay());
+            text.plugin.@class.ProcessParameterStringPlugin($"-wI 0;0 --words " +
+                "1632 Three hundred colonists bound for New France depart from Dieppe, France.\n" +
+                "1677 Scanian War DenmarkNorway captures the harbor town of Marstrand from Sweden.\n" +
+                "1793 Kingdom of Prussia reconquers Mainz from France.\n" +
+                "1813 Sir Thomas Maitland is appointed as the first Governor of Malta.");
+/*
+1821 – While the Mora Rebellion continues, Greeks capture Monemvasia Castle. Turkish troops and citizens are transferred to Asia Minor's coasts.
+1829 – In the United States, William Austin Burt patents the typographer, a precursor to the typewriter.
+1840 – The Province of Canada is created by the Act of Union.
+1862 – American Civil War: Henry Halleck becomes general-in-chief of the Union Army.
+1874 – Aires de Ornelas e Vasconcelos is appointed the Archbishop of the Portuguese colonial enclave of Goa, India. ");
+*/
+
+            /*
+            Generator text = new Generator("Lyrics", new ShaderTest());
+            text.plugin.@class.ProcessParameterStringPlugin($"--size 100,100");
+            */
+
+            Effect loopEffect = new Loop();
+
+            string param = RepeatPoints("0;0;linear 32;100;linear", 32, 32);
+
+            loopEffect.SetParameterString($"-xOI {param}");
+            text.AddEffect(loopEffect);
+
+            display.AddGenerator(text);
+
+            return display;
+        }
+
         public static Display CreateCatDisplay()
         {
             Display display = new(100, "Audio/Disconnected.mp3", new Vector2(50, 50));
 
             Generator catDisplay = new Generator("Cat", new TextDisplay());
             string cat = "tuna\ntest\ntime";
-            catDisplay.plugin.@class.ProcessParameterString($"--words {cat} -wI 0;0");
+            catDisplay.plugin.@class.ProcessParameterStringPlugin($"--words {cat} -wI 0;0");
             display.AddGenerator(catDisplay);
 
             return display;
@@ -94,20 +131,15 @@ namespace ASCIIMusicVisualiser8
             string isActiveInterpolationShader = new InterpolationGraph("0;1 41;0").ExportToString();
             Generator shaderTest = new Generator("Shader Test", new ShaderTest(), isActiveInterpolationShader);
 
-            string spinInterpolation =
-                "0;0 " +
-                "23;0;easeOut;[2] " +
-                "25;5;easeOut;[2] " +
-                "27;0";
 
-            shaderTest.plugin.@class.ProcessParameterString($"--size 50,50");
+            shaderTest.plugin.@class.ProcessParameterStringPlugin($"--size 50,50");
             display.AddGenerator(shaderTest);
 
 
 
             string isActiveInterpolationtTubes = new InterpolationGraph("0;0 41;1").ExportToString();
             Generator swirlingTubesGenerator = new Generator("Tubes", new SwirlingTubes(), isActiveInterpolationtTubes);
-            swirlingTubesGenerator.plugin.@class.ProcessParameterString("--size 50,50");
+            swirlingTubesGenerator.plugin.@class.ProcessParameterStringPlugin("--size 50,50");
             display.AddGenerator(swirlingTubesGenerator);
             
 
@@ -154,7 +186,7 @@ namespace ASCIIMusicVisualiser8
 
             Console.WriteLine(lyricsTextInterpolation);
             //lyricsTextInterpolation = RepeatPoints(lyricsTextInterpolation, 4, 16);
-            lyrics.plugin.@class.ProcessParameterString($"--words {lyricsText} --wordsInterpolation {lyricsTextInterpolation}");
+            lyrics.plugin.@class.ProcessParameterStringPlugin($"--words {lyricsText} --wordsInterpolation {lyricsTextInterpolation}");
             display.AddGenerator(lyrics);
 
 
@@ -166,7 +198,7 @@ namespace ASCIIMusicVisualiser8
             "42;" + "0.9;" + "easeIn;[10] " +
             "74;" + "0;" + "linear";
 
-            noise.plugin.@class.ProcessParameterString($"--size 50,50 -tI {noiseInterpolation}");
+            noise.plugin.@class.ProcessParameterStringPlugin($"--size 50,50 -tI {noiseInterpolation}");
             display.AddGenerator(noise);
 
             return display;

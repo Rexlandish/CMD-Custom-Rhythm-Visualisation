@@ -27,6 +27,8 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
                     return EaseOut(t, curveVariables);
                 case "easeIn":
                     return EaseIn(t, curveVariables);
+                case "easeInOutSin":
+                    return EaseInOutSin(t);
                 default:
                     throw new Exception($"Interpolation {name} not found.");
             }
@@ -82,6 +84,10 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
               : (Math.Pow(2, -20 * t + 10) * Math.Sin((20 * t - 11.125) * c5)) / 2 + 1;
         }
 
+        static double EaseInOutSin(double t)
+        {
+            return -(Math.Cos(Math.PI * t) - 1) / 2;
+        }
     }
 }
 
