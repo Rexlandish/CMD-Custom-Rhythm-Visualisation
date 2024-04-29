@@ -80,10 +80,11 @@
     <Compile Include="Effects\Effect.cs" />
     <Compile Include="Generator.cs" />
     <Compile Include="Plugins\Noise.cs" />
+    <Compile Include="Plugins\ShaderPluginBoilerplate - Copy.cs" />
     <Compile Include="Plugins\ShaderTest.cs" />
     <Compile Include="Plugins\Square.cs" />
     <Compile Include="Plugins\Checkerboard.cs" />
-    <Compile Include="Plugins\ShaderPluginBoilerplate.cs" />
+    <Compile Include="Plugins\PluginBoilerplate.cs" />
     <Compile Include="Plugins\TextDisplay.cs" />
     <Compile Include="Types\Interpolation\Types\Curve.cs" />
     <Compile Include="Types\Interpolation\Types\InterpolationGraph.cs" />

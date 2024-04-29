@@ -24,9 +24,10 @@ namespace ASCIIMusicVisualiser8
             );
             */
 
-            
-            
+
+
             Display display = CreateDigitalDirectionsDisplay();
+            //Display display = CreateCatDisplay();
             Console.ReadLine();
             display.Run();
             
@@ -37,6 +38,19 @@ namespace ASCIIMusicVisualiser8
             SwirlingTubes swirlingTubes = new SwirlingTubes();
             Console.WriteLine(StringifyCharlist(swirlingTubes.Generate(0)));
             */
+
+        }
+
+        public static Display CreateCatDisplay()
+        {
+            Display display = new(100, "Audio/Disconnected.mp3", new Vector2(50, 50));
+
+            Generator catDisplay = new Generator("Cat", new TextDisplay());
+            string cat = "tuna\ntest\ntime";
+            catDisplay.plugin.@class.ProcessParameterString($"--words {cat} -wI 0;0");
+            display.AddGenerator(catDisplay);
+
+            return display;
 
         }
 
@@ -155,10 +169,7 @@ namespace ASCIIMusicVisualiser8
             noise.plugin.@class.ProcessParameterString($"--size 50,50 -tI {noiseInterpolation}");
             display.AddGenerator(noise);
 
-
-
             return display;
-            
             
         }
     }
