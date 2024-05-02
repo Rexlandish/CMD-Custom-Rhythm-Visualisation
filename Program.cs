@@ -42,38 +42,52 @@ namespace ASCIIMusicVisualiser8
 
         }
 
+
         public static Display CreateEffectTestDisplay()
         {
 
-            Display display = new(100, "Audio/Disconnected.mp3", new Vector2(100, 100));
+            Display display = new(100, "Audio/Disconnected.mp3", new Vector2(150, 150));
+
             
-            Generator text = new Generator("Lyrics", new TextDisplay());
-            text.plugin.@class.ProcessParameterStringPlugin($"-wI 0;0 --words " +
-                "1632 Three hundred colonists bound for New France depart from Dieppe, France.\n" +
-                "1677 Scanian War DenmarkNorway captures the harbor town of Marstrand from Sweden.\n" +
-                "1793 Kingdom of Prussia reconquers Mainz from France.\n" +
-                "1813 Sir Thomas Maitland is appointed as the first Governor of Malta.");
-/*
-1821 – While the Mora Rebellion continues, Greeks capture Monemvasia Castle. Turkish troops and citizens are transferred to Asia Minor's coasts.
-1829 – In the United States, William Austin Burt patents the typographer, a precursor to the typewriter.
-1840 – The Province of Canada is created by the Act of Union.
-1862 – American Civil War: Henry Halleck becomes general-in-chief of the Union Army.
-1874 – Aires de Ornelas e Vasconcelos is appointed the Archbishop of the Portuguese colonial enclave of Goa, India. ");
-*/
+            Generator lyrics = new Generator("Lyrics", new Debug());
+            //lyrics.plugin.@class.ProcessParameterStringPlugin("");
 
+
+            Effect position = new Position();
+            string xPosition = RepeatPoints("0;0;easeOutElastic 4;120;easeOutElastic", 10, 7);
+            string yPosition = RepeatPoints("0;0;easeOutElastic 4;120;easeOutElastic", 10, 8);
+            position.SetParameterString($"-xPI {xPosition} -yPI {yPosition}");
+            lyrics.AddEffect(position);
+
+            display.AddGenerator(lyrics);
+            
+
+
+
+
+            Generator shader = new Generator("Shader", new ShaderTest());
+            shader.plugin.@class.ProcessParameterStringPlugin($"--size 150,150");
+            
             /*
-            Generator text = new Generator("Lyrics", new ShaderTest());
-            text.plugin.@class.ProcessParameterStringPlugin($"--size 100,100");
-            */
-
             Effect loopEffect = new Loop();
 
-            string param = RepeatPoints("0;0;linear 32;100;linear", 32, 32);
+            string xParam = RepeatPoints("0;0;easeInOutSin 4;100;easeOutElastic;[5]", 32, 8);
+            string yParam = RepeatPoints("2;0;easeInOutSin 6;50;easeInOutSin", 32, 8);
 
-            loopEffect.SetParameterString($"-xOI {param}");
-            text.AddEffect(loopEffect);
+            loopEffect.SetParameterString($"-xOI {xParam} -yOI {yParam}");
+            shader.AddEffect(loopEffect);
+            */
 
-            display.AddGenerator(text);
+
+            Effect loopEffectLyrics = new Loop();
+            string xParamText = RepeatPoints("0;0;easeInOutSin 2;100;easeInOutSin 3;50;easeInOutSin", 32, 4);
+            string yParamText = RepeatPoints("0;0;easeInOutSin 1;8;easeInOutSin 2.5;85;easeInOutSin", 32, 4);
+
+            loopEffectLyrics.SetParameterString($"-yOI {xParamText} -xOI {yParamText}");
+            shader.AddEffect(loopEffectLyrics);
+
+            display.AddGenerator(shader);
+
 
             return display;
         }

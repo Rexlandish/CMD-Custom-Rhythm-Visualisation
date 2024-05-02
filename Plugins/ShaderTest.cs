@@ -135,7 +135,7 @@ namespace ASCIIMusicVisualiser8
 
             d = 0.004f / d;
 
-            return d;
+            return 2 * (d - 0.1f);
         }
 
 

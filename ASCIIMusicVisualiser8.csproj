@@ -79,10 +79,12 @@
     <Compile Include="Display.cs" />
     <Compile Include="Effects\Effect.cs" />
     <Compile Include="Effects\Loop.cs" />
+    <Compile Include="Effects\Position.cs" />
     <Compile Include="Generator.cs" />
     <Compile Include="ParameterProcessor.cs" />
+    <Compile Include="Plugins\Debug.cs" />
     <Compile Include="Plugins\Noise.cs" />
-    <Compile Include="Plugins\ShaderPluginBoilerplate - Copy.cs" />
+    <Compile Include="Plugins\ShaderPluginBoilerplate.cs" />
     <Compile Include="Plugins\ShaderTest.cs" />
     <Compile Include="Plugins\Square.cs" />
     <Compile Include="Plugins\Checkerboard.cs" />

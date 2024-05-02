@@ -129,25 +129,25 @@ namespace ASCIIMusicVisualiser8
 
         void DrawLayer(List<List<char>> _displayBoard, Vector2 topLeftPosition, List<List<char>> textToDraw, char? transparentChar = null)
         {
-            
+
+            int height = _displayBoard.Count;
+            int width = _displayBoard[0].Count;
+
             // Iterate through each char in textToDraw and change it's corresponding 
             for (int i = 0; i < textToDraw.Count; i++)
             {
                 for (int j = 0; j < textToDraw[0].Count; j++)
                 {
-                    try
+                    Vector2 positionToDraw = new(i + (int)topLeftPosition.X, j + (int)topLeftPosition.Y);
+
+                    // If the coordinates are in bounds, draw the character
+                    if (positionToDraw.X < width && positionToDraw.Y  < height)
                     {
                         // If the current character is not transparent, draw it onto the displayBoard
                         char currentChar = textToDraw[i][j];
-                        Vector2 positionToDraw = new(i + (int)topLeftPosition.X, j + (int)topLeftPosition.Y);
                         if (currentChar != transparentChar) _displayBoard[(int)positionToDraw.X][(int)positionToDraw.Y] = currentChar;
-                        
-                    }
-                    catch
-                    {
-                        // Ignore out of bounds characters
-                    }
-                    
+
+                    }                    
                 }
             }
         }
