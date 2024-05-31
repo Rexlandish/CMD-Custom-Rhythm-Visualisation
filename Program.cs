@@ -26,9 +26,15 @@ namespace ASCIIMusicVisualiser8
             */
 
 
-            Display display = CreateEffectTestDisplay();
+
+            Display display = CreateDigitalDirectionsDisplay();
+            //Display display = CreateEffectTestDisplay();
             //Display display = CreateDigitalDirectionsDisplay();
             //Display display = CreateCatDisplay();
+            //Display display = CreateRandomDisplay();
+
+            Display display = CreateGifTestDisplay();
+
             Console.ReadLine();
             display.Run();
             
@@ -40,6 +46,169 @@ namespace ASCIIMusicVisualiser8
             Console.WriteLine(StringifyCharlist(swirlingTubes.Generate(0)));
             */
 
+        }
+
+        public static Display CreateGifTestDisplay()
+        {
+
+            Display display = new Display(95, "audio/Vis.wav", new(100, 100));
+
+            Generator tubes = new("tubes", new SwirlingTubes());
+            tubes.plugin.@class.ProcessParameterStringPlugin("--size 100,100");
+
+
+
+            Generator gen = new("Gif Test", new TextDisplay());
+
+            // Make a utility function for reading text animations from file and returning their length and dimensions
+            string gifText = Utility.IO.ReadFromFile(@"C:\Path\To\Gif");
+            gifText = gifText.Replace(@"\n", "\n");
+
+            int count = gifText.Split(',').Length;
+
+
+            string gifInterpolation = RepeatPoints($"0;0;easeOutElastic 1;{count * 0.35}", 32, 1f);
+            gen.plugin.@class.ProcessParameterStringPlugin($"-d , -w {gifText} -wI {gifInterpolation}");
+
+            Console.WriteLine(gifText);
+
+            /*
+            Effect alpha = new ForceAlpha();
+            alpha.SetParameterString("-c []");
+
+            gen.AddEffect(alpha);
+            */
+
+
+
+
+            display.AddGenerators(new() { tubes, gen });
+
+            return display;
+
+        }
+
+        public static Display CreateRandomDisplay()
+        {
+            Display display = new Display(100, "audio/SlowDown.mp3", new(50, 50));
+
+            var background = new Generator("Background", new ShaderTest());
+            background.plugin.@class.ProcessParameterStringPlugin("--size 100,100");
+
+
+            //string xInterpBackground = RepeatPoints("0;0;easeIn;[3] 8;100", 16, 8);
+            string xInterpBackground = "0;0";
+            string yInterpBackground = RepeatPoints("0;0;linear 6;100", 16, 6);
+
+
+            Effect bgScrollingEffect = new Offset();
+            bgScrollingEffect.SetParameterString($"-xOI {xInterpBackground} -yOI {yInterpBackground}");
+
+            background.AddEffect(bgScrollingEffect);
+
+            display.AddGenerator(background);
+
+            return display;
+
+        }
+
+        public static Display CreateEffectTestDisplay()
+        {
+
+            Display display = new(100, "Audio/Disconnected.mp3", new Vector2(150, 150));
+
+            
+            Generator lyrics = new Generator("Lyrics", new Debug());
+            //lyrics.plugin.@class.ProcessParameterStringPlugin("");
+
+
+            Effect position = new Position();
+            string xPosition = RepeatPoints("0;0;easeOutElastic 4;120;easeOutElastic", 10, 7);
+            string yPosition = RepeatPoints("0;0;easeOutElastic 4;120;easeOutElastic", 10, 8);
+            position.SetParameterString($"-xPI {xPosition} -yPI {yPosition}");
+            lyrics.AddEffect(position);
+
+            display.AddGenerator(lyrics);
+            
+
+
+
+
+            Generator shader = new Generator("Shader", new ShaderTest());
+            shader.plugin.@class.ProcessParameterStringPlugin($"--size 150,150");
+            
+            /*
+            Effect loopEffect = new Loop();
+
+            string xParam = RepeatPoints("0;0;easeInOutSin 4;100;easeOutElastic;[5]", 32, 8);
+            string yParam = RepeatPoints("2;0;easeInOutSin 6;50;easeInOutSin", 32, 8);
+
+            loopEffect.SetParameterString($"-xOI {xParam} -yOI {yParam}");
+            shader.AddEffect(loopEffect);
+            */
+
+
+            Effect loopEffectLyrics = new Offset();
+            string xParamText = RepeatPoints("0;0;easeInOutSin 2;100;easeInOutSin 3;50;easeInOutSin", 32, 4);
+            string yParamText = RepeatPoints("0;0;easeInOutSin 1;8;easeInOutSin 2.5;85;easeInOutSin", 32, 4);
+
+            loopEffectLyrics.SetParameterString($"-yOI {xParamText} -xOI {yParamText}");
+            shader.AddEffect(loopEffectLyrics);
+
+            display.AddGenerator(shader);
+
+
+            return display;
+        }
+
+
+        public static Display CreateEffectTestDisplay()
+        {
+
+            Display display = new(100, "Audio/Disconnected.mp3", new Vector2(150, 150));
+
+            
+            Generator lyrics = new Generator("Lyrics", new Debug());
+            //lyrics.plugin.@class.ProcessParameterStringPlugin("");
+
+
+            Effect position = new Position();
+            string xPosition = RepeatPoints("0;0;easeOutElastic 4;120;easeOutElastic", 10, 7);
+            string yPosition = RepeatPoints("0;0;easeOutElastic 4;120;easeOutElastic", 10, 8);
+            position.SetParameterString($"-xPI {xPosition} -yPI {yPosition}");
+            lyrics.AddEffect(position);
+
+            display.AddGenerator(lyrics);
+            
+
+
+
+
+            Generator shader = new Generator("Shader", new ShaderTest());
+            shader.plugin.@class.ProcessParameterStringPlugin($"--size 150,150");
+            
+            /*
+            Effect loopEffect = new Loop();
+
+            string xParam = RepeatPoints("0;0;easeInOutSin 4;100;easeOutElastic;[5]", 32, 8);
+            string yParam = RepeatPoints("2;0;easeInOutSin 6;50;easeInOutSin", 32, 8);
+
+            loopEffect.SetParameterString($"-xOI {xParam} -yOI {yParam}");
+            shader.AddEffect(loopEffect);
+            */
+
+
+            Effect loopEffectLyrics = new Loop();
+            string xParamText = RepeatPoints("0;0;easeInOutSin 2;100;easeInOutSin 3;50;easeInOutSin", 32, 4);
+            string yParamText = RepeatPoints("0;0;easeInOutSin 1;8;easeInOutSin 2.5;85;easeInOutSin", 32, 4);
+
+            loopEffectLyrics.SetParameterString($"-yOI {xParamText} -xOI {yParamText}");
+            shader.AddEffect(loopEffectLyrics);
+
+            display.AddGenerator(shader);
+
+
+            return display;
         }
 
 
@@ -111,34 +280,34 @@ namespace ASCIIMusicVisualiser8
             Display display = new Display(158, "Audio/DigitalDirections.mp3", new Vector2(50, 50));
 
 
-            /*
+
             // Square 2
             Generator square2 = new Generator("Square 2", new Square());
 
             string squareSizeInterpolation2 = "0>3.5;1>0;easeOutElastic;[] 3.5>7;0>1;easeOut;[4] 7>10.5;1>0;easeOutElastic;[] 10.5>14;0>1;easeOut;[4]";
             squareSizeInterpolation2 = RepeatPoints(squareSizeInterpolation2, 16, 14);
-            square2.plugin.@class.ProcessParameterString($"--character ' --sizeInterpolation {squareSizeInterpolation2}");
+            square2.plugin.@class.ProcessParameterStringPlugin($"--character ' --sizeInterpolation {squareSizeInterpolation2}");
 
             display.AddGenerator(square2);
-            */
 
-            /*
+
+
             Generator checkerGenerator = new Generator("Checkerboard", new Checkerboard());
-            checkerGenerator.plugin.@class.ProcessParameterString("--size 200,50");
+            checkerGenerator.plugin.@class.ProcessParameterStringPlugin("--size 200,50");
             display.AddGenerator(checkerGenerator);
-            */
 
-            /*
+
+
             // Square 1
             Generator square = new Generator("Square 1", new Square());
 
             string squareSizeInterpolation = "0>3.5;0>1;easeOutElastic;[] 3.5>7;1>0;easeOut;[4] 7>10.5;0>1;easeOutElastic;[] 10.5>14;1>0;easeOut;[4]";
-            squareSizeInterpolation = Utility.RepeatPoints(squareSizeInterpolation, 16, 14);
+            squareSizeInterpolation = RepeatPoints(squareSizeInterpolation, 16, 14);
 
-            square.plugin.@class.ProcessParameterString($"--character . --sizeInterpolation {squareSizeInterpolation}");
+            square.plugin.@class.ProcessParameterStringPlugin($"--character . --sizeInterpolation {squareSizeInterpolation}");
             display.AddGenerator(square);
 
-            */
+
 
 
 

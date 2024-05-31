@@ -70,7 +70,7 @@ namespace ASCIIMusicVisualiser8
             {
                 List<List<char>> effectOutput = plugin.Generate(currentBeat, out char transparentChar);
 
-                char newTransparentChar = new char();
+                char newTransparentChar = transparentChar;
                 foreach (Effect effect in effects)
                 {
                     effectOutput = effect.ApplyTo(effectOutput, currentBeat, transparentChar, out newTransparentChar);

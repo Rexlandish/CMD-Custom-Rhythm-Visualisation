@@ -6,6 +6,9 @@ using static ASCIIMusicVisualiser8.Utility.Creation;
 
 namespace ASCIIMusicVisualiser8
 {
+    /// <summary>
+    /// <b>Size</b>: Dimensions for the shader to render on. <i>(--size, -s)</i>
+    /// </summary>
     public class ShaderTest : Plugin, IPlugin
     {
 

@@ -8,6 +8,11 @@ using static ASCIIMusicVisualiser8.Utility.Maths;
 
 namespace ASCIIMusicVisualiser8.Effects
 {
+    /// <summary>
+    /// Sets position to draw the text.
+    /// <b>X Position Interpolation</b>: Dwisott. <i>(--xPositionInterpolation, -xPI)</i><br/>
+    /// <b>y Position Interpolation</b>: Dwisott. <i>(--yPositionInterpolation, -yPI)</i><br/>
+    /// </summary>
     public class Position : Effect
     {
 

@@ -2,6 +2,7 @@
 using ASCIIMusicVisualiser8.Types.Interpolation.Types;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 
@@ -286,15 +287,19 @@ namespace ASCIIMusicVisualiser8
             }
         }
 
+        public class IO
+        { 
+            public static string ReadFromFile(string filepath)
+            {
+                using (StreamReader textFile = new StreamReader(filepath))
+                {
+                    return textFile.ReadToEnd();
+                }
+            }
+        }
 
 
 
-
-
-
-
-
-        
 
     }
 

@@ -8,6 +8,11 @@ using static ASCIIMusicVisualiser8.Utility.Conversion;
 
 namespace ASCIIMusicVisualiser8.Plugins
 {
+    /// <summary>
+    /// <b>Words</b>: Underscore separated text to display. <i>(--words, -w)</i><br/>
+    /// <b>Words Interpolation</b>: What index of the parsed text list to display. <i>(--wordsInterpolation, -wI)</i><br/>
+    /// <b>Delimiter</b>: What character separates words to display. <i>(--delimiter, -d)</i><br/>
+    /// </summary>
     internal class TextDisplay : Plugin, IPlugin
     {
 
@@ -18,6 +23,7 @@ namespace ASCIIMusicVisualiser8.Plugins
         List<List<string>> phraseFrames = new();
         Vector2[] positions;
         InterpolationGraph positionInterpolation;
+        char delimiter;
 
         public override List<List<char>> Generate(double beat, out char transparentChar)
         {
@@ -43,7 +49,8 @@ namespace ASCIIMusicVisualiser8.Plugins
 
             // Debug, show index of current phrase
             //wordsToRender.Add(new (index.ToString().ToCharArray()));
-            transparentChar = new char();
+            //transparentChar = new char();
+            transparentChar = ' ';
             //transparentChar = '*';
 
             return wordsToRender;
@@ -54,11 +61,18 @@ namespace ASCIIMusicVisualiser8.Plugins
         public override void Init()
         {
             // "abc,abc\ndef,abc\ndef\nghi"
-            string[] wordsList = StringToStringArray(GetPluginParameter("words").givenUserParameter, false, '_');
-            
+
+            delimiter = GetPluginParameter("delimiter").givenUserParameter[0];
+            Console.WriteLine("The length is...");
+            Console.WriteLine(GetPluginParameter("words").givenUserParameter.Split('_').Length);
+
+            string[] wordsList = StringToStringArray(GetPluginParameter("words").givenUserParameter, false, delimiter);
+
+                
             foreach (string phrase in wordsList)
             {
-                Console.WriteLine($"Initializing with {string.Join(",",phrase.Split('\n'))}");
+                //{string.Join(",",phrase.Split('\n'))}
+                Console.WriteLine($"Reading {phrase}");
                 phraseFrames.Add(new(phrase.Split('\n')));
             }
 
@@ -72,6 +86,7 @@ namespace ASCIIMusicVisualiser8.Plugins
             {
                 new PluginParameter("words", new string[] {"--words", "-w"}, ""),
                 new PluginParameter("wordsInterpolation", new string[] {"--wordsInterpolation", "-wI"}, ""),
+                new PluginParameter("delimiter", new string[] {"--delimiter", "-d"}, ""),
             };
         }
     }

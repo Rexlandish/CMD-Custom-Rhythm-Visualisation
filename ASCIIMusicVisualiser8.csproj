@@ -58,6 +58,9 @@
     <Reference Include="NAudio.WinMM, Version=2.2.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
       <HintPath>packages\NAudio.WinMM.2.2.1\lib\netstandard2.0\NAudio.WinMM.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -75,13 +78,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Conductor.cs" />
-    <Compile Include="Display.cs" />
+    <Compile Include="Types\Conductor.cs" />
+    <Compile Include="Main Files\Display.cs" />
     <Compile Include="Effects\Effect.cs" />
     <Compile Include="Effects\Loop.cs" />
     <Compile Include="Effects\Position.cs" />
     <Compile Include="Generator.cs" />
-    <Compile Include="ParameterProcessor.cs" />
+    <Compile Include="Effects\ForceAlpha.cs" />
+    <Compile Include="Effects\Offset.cs" />
+    <Compile Include="Effects\Position.cs" />
+    <Compile Include="Types\Generator.cs" />
+    <Compile Include="Types\ParameterProcessor.cs" />
     <Compile Include="Plugins\Debug.cs" />
     <Compile Include="Plugins\Noise.cs" />
     <Compile Include="Plugins\ShaderPluginBoilerplate.cs" />
@@ -96,7 +103,7 @@
     <Compile Include="Types\Plugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Plugins\SwirlingTubes.cs" />
-    <Compile Include="Utility.cs" />
+    <Compile Include="Main Files\Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
