@@ -15,6 +15,15 @@ namespace ASCIIMusicVisualiser8
 
         static void Main(string[] args)
         {
+            var n = new Noise();
+            n.Seed(999999999, 1535562654, 947503915);
+
+            for (int i = 0; i < 100; i++)
+            {
+                Console.WriteLine(n.NextUInt());
+            }
+            Console.ReadLine();
+
             /*
             graph.SetPoints(new System.Collections.Generic.List<InterpolationPoint>
                 {
@@ -27,12 +36,11 @@ namespace ASCIIMusicVisualiser8
 
 
 
-            Display display = CreateDigitalDirectionsDisplay();
+            //Display display = CreateDigitalDirectionsDisplay();
             //Display display = CreateEffectTestDisplay();
             //Display display = CreateDigitalDirectionsDisplay();
             //Display display = CreateCatDisplay();
             //Display display = CreateRandomDisplay();
-
             Display display = CreateGifTestDisplay();
 
             Console.ReadLine();
@@ -51,38 +59,96 @@ namespace ASCIIMusicVisualiser8
         public static Display CreateGifTestDisplay()
         {
 
-            Display display = new Display(95, "audio/Vis.wav", new(100, 100));
+            Display display = new Display(110, "audio/Funk110.wav", new(100, 100));
 
             Generator tubes = new("tubes", new SwirlingTubes());
             tubes.plugin.@class.ProcessParameterStringPlugin("--size 100,100");
 
 
 
-            Generator gen = new("Gif Test", new TextDisplay());
+            string genOneActive = RepeatPoints("0;1 8;0", 32, 16);
+            Generator genOne = new("Gif Test", new TextDisplay(), genOneActive);
 
             // Make a utility function for reading text animations from file and returning their length and dimensions
-            string gifText = Utility.IO.ReadFromFile(@"C:\Path\To\Gif");
-            gifText = gifText.Replace(@"\n", "\n");
-
-            int count = gifText.Split(',').Length;
-
-
-            string gifInterpolation = RepeatPoints($"0;0;easeOutElastic 1;{count * 0.35}", 32, 1f);
-            gen.plugin.@class.ProcessParameterStringPlugin($"-d , -w {gifText} -wI {gifInterpolation}");
-
-            Console.WriteLine(gifText);
-
-            /*
-            Effect alpha = new ForceAlpha();
-            alpha.SetParameterString("-c []");
-
-            gen.AddEffect(alpha);
-            */
+            //string gifTextOne = Utility.IO.ReadFromFile(@"");
+            string gifTextOne = Dance.bearDance;
+            gifTextOne = gifTextOne.Replace(@"\n", "\n");
 
 
+            int countOne = gifTextOne.Split(',').Length - 1;
+
+            string gifInterpolationOne = RepeatPoints($"0;0;linear 2;{countOne} 2;0;linear 4;{countOne} 4;{0} 6;{countOne/2};easeOut;[4] 8;{countOne}", 32, 8f);
+            genOne.plugin.@class.ProcessParameterStringPlugin($"-d , -w {gifTextOne} -wI {gifInterpolationOne}");
+            
+            // Scaling and offset
+            Effect scale = new Scale();
+            string scalingGraph = RepeatPoints("0;1;easeOutElastic 4;1.5 4;1.75 5.5;1.25 6;1 8;1", 32, 8);
+            scale.SetParameterString($"-sFI {scalingGraph} -xCI 0;0 -yCI 0;0");
+            genOne.AddEffect(scale);
 
 
-            display.AddGenerators(new() { tubes, gen });
+            Effect offset = new Offset();
+            string offsetGraph = RepeatPoints("0;0 7;0;easeOut;[4] 8;100", 32, 8);
+            offset.SetParameterString($"-xOI {offsetGraph} -yOI 0;0");
+            genOne.AddEffect(offset);
+
+
+
+            //string noiseActiveInterpolation = RepeatPoints("0;0;linear 1;1 7;1;linear 8;0", 32, 8);
+            string noiseActiveInterpolation = RepeatPoints("0;0; 7;1; 8;0", 32, 8);
+            Generator noise = new Generator("Noise", new Noise(), noiseActiveInterpolation);
+            noise.plugin.@class.ProcessParameterStringPlugin($"--size 100,100 -tI 0;1");
+
+
+
+
+            Generator checker = new Generator("Checker", new Checkerboard(), genOneActive);
+            checker.plugin.@class.ProcessParameterStringPlugin("--size 100,100");
+
+
+
+
+
+            // ------------------------------------------------------------------------------------------
+
+
+            string genTwoActive = RepeatPoints("0;0 8;1", 32, 16);
+            Generator genTwo = new("Gif Test 2", new TextDisplay(), genTwoActive);
+
+            // Make a utility function for reading text animations from file and returning their length and dimensions
+            //string gifTextTwo = Utility.IO.ReadFromFile(@"");
+            string gifTextTwo = Dance.catDance;
+            gifTextTwo = gifTextTwo.Replace(@"\n", "\n");
+
+
+            int countTwo = gifTextTwo.Split(',').Length - 1;
+
+            float lerpStrength = 3.25f;
+            string gifInterpolationTwo = RepeatPoints($"0;{countTwo * 0};easeOut;[{lerpStrength}] 1;{countTwo * 0.25f};easeOut;[{lerpStrength}] 2;{countTwo * 0.5f};easeOut;[{lerpStrength}] 3;{countTwo * 0.75f};easeOut;[4] 1;{countTwo * 1f};easeOut;[{lerpStrength}]", 128, 4f);
+            //string gifInterpolationTwo = RepeatPoints($"0;{countTwo * 0};easeOut;[{lerpStrength}] 2;{countTwo * 0.25f};easeOut;[{lerpStrength}] 4;{countTwo * 0.5f};easeOut;[{lerpStrength}] 6;{countTwo * 0.75f};easeOut;[{lerpStrength}] 8;{countTwo * 1f};easeOut;[{lerpStrength}]", 32, 8f);
+            genTwo.plugin.@class.ProcessParameterStringPlugin($"-d , -w {gifTextTwo} -wI {gifInterpolationTwo}");
+
+            // Scaling and offset
+
+            // Scaling and offset
+            Effect scaleTwo = new Scale();
+            string scalingGraphTwo = RepeatPoints("0;10;easeOut;[8] 1;1 8;1.3", 128, 8);
+            scaleTwo.SetParameterString($"-sFI {scalingGraphTwo} -xCI 0;0 -yCI 0;0");
+            genTwo.AddEffect(scaleTwo);
+
+            Effect offsetTwo = new Offset();
+            string offsetGraphTwo = RepeatPoints("0;0 7;0;easeOut;[4] 8;100", 32, 8);
+            offsetTwo.SetParameterString($"-xOI {offsetGraphTwo} -yOI 0;0");
+            genTwo.AddEffect(offsetTwo);
+
+
+            Generator shader = new Generator("Shader", new ShaderTest(), genTwoActive);
+            shader.plugin.@class.ProcessParameterStringPlugin("--size 100,100");
+
+
+
+
+            display.AddGenerators(new() { shader, tubes, checker, genOne, genTwo, noise });
 
             return display;
 
@@ -149,106 +215,6 @@ namespace ASCIIMusicVisualiser8
 
 
             Effect loopEffectLyrics = new Offset();
-            string xParamText = RepeatPoints("0;0;easeInOutSin 2;100;easeInOutSin 3;50;easeInOutSin", 32, 4);
-            string yParamText = RepeatPoints("0;0;easeInOutSin 1;8;easeInOutSin 2.5;85;easeInOutSin", 32, 4);
-
-            loopEffectLyrics.SetParameterString($"-yOI {xParamText} -xOI {yParamText}");
-            shader.AddEffect(loopEffectLyrics);
-
-            display.AddGenerator(shader);
-
-
-            return display;
-        }
-
-
-        public static Display CreateEffectTestDisplay()
-        {
-
-            Display display = new(100, "Audio/Disconnected.mp3", new Vector2(150, 150));
-
-            
-            Generator lyrics = new Generator("Lyrics", new Debug());
-            //lyrics.plugin.@class.ProcessParameterStringPlugin("");
-
-
-            Effect position = new Position();
-            string xPosition = RepeatPoints("0;0;easeOutElastic 4;120;easeOutElastic", 10, 7);
-            string yPosition = RepeatPoints("0;0;easeOutElastic 4;120;easeOutElastic", 10, 8);
-            position.SetParameterString($"-xPI {xPosition} -yPI {yPosition}");
-            lyrics.AddEffect(position);
-
-            display.AddGenerator(lyrics);
-            
-
-
-
-
-            Generator shader = new Generator("Shader", new ShaderTest());
-            shader.plugin.@class.ProcessParameterStringPlugin($"--size 150,150");
-            
-            /*
-            Effect loopEffect = new Loop();
-
-            string xParam = RepeatPoints("0;0;easeInOutSin 4;100;easeOutElastic;[5]", 32, 8);
-            string yParam = RepeatPoints("2;0;easeInOutSin 6;50;easeInOutSin", 32, 8);
-
-            loopEffect.SetParameterString($"-xOI {xParam} -yOI {yParam}");
-            shader.AddEffect(loopEffect);
-            */
-
-
-            Effect loopEffectLyrics = new Loop();
-            string xParamText = RepeatPoints("0;0;easeInOutSin 2;100;easeInOutSin 3;50;easeInOutSin", 32, 4);
-            string yParamText = RepeatPoints("0;0;easeInOutSin 1;8;easeInOutSin 2.5;85;easeInOutSin", 32, 4);
-
-            loopEffectLyrics.SetParameterString($"-yOI {xParamText} -xOI {yParamText}");
-            shader.AddEffect(loopEffectLyrics);
-
-            display.AddGenerator(shader);
-
-
-            return display;
-        }
-
-
-        public static Display CreateEffectTestDisplay()
-        {
-
-            Display display = new(100, "Audio/Disconnected.mp3", new Vector2(150, 150));
-
-            
-            Generator lyrics = new Generator("Lyrics", new Debug());
-            //lyrics.plugin.@class.ProcessParameterStringPlugin("");
-
-
-            Effect position = new Position();
-            string xPosition = RepeatPoints("0;0;easeOutElastic 4;120;easeOutElastic", 10, 7);
-            string yPosition = RepeatPoints("0;0;easeOutElastic 4;120;easeOutElastic", 10, 8);
-            position.SetParameterString($"-xPI {xPosition} -yPI {yPosition}");
-            lyrics.AddEffect(position);
-
-            display.AddGenerator(lyrics);
-            
-
-
-
-
-            Generator shader = new Generator("Shader", new ShaderTest());
-            shader.plugin.@class.ProcessParameterStringPlugin($"--size 150,150");
-            
-            /*
-            Effect loopEffect = new Loop();
-
-            string xParam = RepeatPoints("0;0;easeInOutSin 4;100;easeOutElastic;[5]", 32, 8);
-            string yParam = RepeatPoints("2;0;easeInOutSin 6;50;easeInOutSin", 32, 8);
-
-            loopEffect.SetParameterString($"-xOI {xParam} -yOI {yParam}");
-            shader.AddEffect(loopEffect);
-            */
-
-
-            Effect loopEffectLyrics = new Loop();
             string xParamText = RepeatPoints("0;0;easeInOutSin 2;100;easeInOutSin 3;50;easeInOutSin", 32, 4);
             string yParamText = RepeatPoints("0;0;easeInOutSin 1;8;easeInOutSin 2.5;85;easeInOutSin", 32, 4);
 

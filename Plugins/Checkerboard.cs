@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Windows.Input;
 using static ASCIIMusicVisualiser8.Utility.Creation;
 
 namespace ASCIIMusicVisualiser8
 {
     public class Checkerboard : Plugin, IPlugin
     {
-
+        /// <summary>
+        /// <b>Size</b>: Dimensions for the shader to render on. <i>(--size, -s)</i>
+        /// </summary>
         public override string pluginName {get => "Checkerboard"; }
 
         Vector2 size;
@@ -63,6 +66,7 @@ namespace ASCIIMusicVisualiser8
             double scrollspeedX = 1;
             double scrollspeedY = -2;
 
+
             for (int i = 0; i < size.Y; i++)
             {
                 for (int j = 0; j < size.X; j++)
@@ -81,6 +85,9 @@ namespace ASCIIMusicVisualiser8
 
                     //Math.Pow(opacity, 2);
                     opacity = Saturate(opacity, 0);
+
+                    
+
                     finalArray[i][j] = GetCharFromDensity(opacity);
                 }
             }

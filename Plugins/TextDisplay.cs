@@ -24,12 +24,25 @@ namespace ASCIIMusicVisualiser8.Plugins
         Vector2[] positions;
         InterpolationGraph positionInterpolation;
         char delimiter;
+        int phraseFrameCount;
 
         public override List<List<char>> Generate(double beat, out char transparentChar)
         {
             // Get current interpolation from beat
             int index = (int)Math.Floor(positionInterpolation.GetTime(beat));
 
+            // Limit phrases between 
+            if (index <= 0)
+            {
+                index = 0;
+            }
+            if (index > phraseFrameCount)
+            {
+                while (index > phraseFrameCount)
+                {
+                    index -= phraseFrameCount;
+                }
+            }
 
             // Render all text for now
             List<List<char>> wordsToRender = new();
@@ -63,8 +76,6 @@ namespace ASCIIMusicVisualiser8.Plugins
             // "abc,abc\ndef,abc\ndef\nghi"
 
             delimiter = GetPluginParameter("delimiter").givenUserParameter[0];
-            Console.WriteLine("The length is...");
-            Console.WriteLine(GetPluginParameter("words").givenUserParameter.Split('_').Length);
 
             string[] wordsList = StringToStringArray(GetPluginParameter("words").givenUserParameter, false, delimiter);
 
@@ -72,9 +83,11 @@ namespace ASCIIMusicVisualiser8.Plugins
             foreach (string phrase in wordsList)
             {
                 //{string.Join(",",phrase.Split('\n'))}
-                Console.WriteLine($"Reading {phrase}");
+                //Console.WriteLine($"Reading {phrase}");
                 phraseFrames.Add(new(phrase.Split('\n')));
             }
+
+            phraseFrameCount = phraseFrames.Count;
 
             positionInterpolation = new InterpolationGraph(GetPluginParameter("wordsInterpolation").givenUserParameter);
         }
