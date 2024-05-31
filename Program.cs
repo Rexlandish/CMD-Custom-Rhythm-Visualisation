@@ -15,14 +15,6 @@ namespace ASCIIMusicVisualiser8
 
         static void Main(string[] args)
         {
-            var n = new Noise();
-            n.Seed(999999999, 1535562654, 947503915);
-
-            for (int i = 0; i < 100; i++)
-            {
-                Console.WriteLine(n.NextUInt());
-            }
-            Console.ReadLine();
 
             /*
             graph.SetPoints(new System.Collections.Generic.List<InterpolationPoint>
@@ -43,7 +35,7 @@ namespace ASCIIMusicVisualiser8
             //Display display = CreateRandomDisplay();
             Display display = CreateGifTestDisplay();
 
-            Console.ReadLine();
+            //Console.ReadLine();
             display.Run();
             
 
