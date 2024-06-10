@@ -29,9 +29,22 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
                     return EaseIn(t, curveVariables);
                 case "easeInOutSin":
                     return EaseInOutSin(t);
+                case "cos":
+                    return Cos(t, curveVariables);
                 default:
                     throw new Exception($"Interpolation {name} not found.");
             }
+        }
+
+        static double Cos(double t, double[] curveVariables)
+        {
+            if (curveVariables.Length == 0)
+            {
+                throw new Exception("No curve variables provided!");
+            }
+
+            double curveCount = curveVariables[0];
+            return (Math.Cos(curveCount * Math.PI * t) + 1) / 2;
         }
 
         static double Linear(double t)

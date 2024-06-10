@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using static ASCIIMusicVisualiser8.Utility.Maths;
@@ -34,7 +35,7 @@ namespace ASCIIMusicVisualiser8.Effects
             yOffsetInterpolation = new InterpolationGraph(GetPluginParameter("yOffsetInterpolation").givenUserParameter);
         }
 
-        public override List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, out char newTransparentChar)
+        public override List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)
         {
             List<List<char>> xLoopedGrid = new List<List<char>>();
 
@@ -63,10 +64,11 @@ namespace ASCIIMusicVisualiser8.Effects
             
             yLoopedGrid.AddRange(xLoopedGrid.GetRange(0, y));
 
-            
 
 
             newTransparentChar = transparentChar;
+            newDrawPoint = drawPoint;
+
             return yLoopedGrid;
         }
     }

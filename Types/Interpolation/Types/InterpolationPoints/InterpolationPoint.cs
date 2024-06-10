@@ -39,7 +39,6 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             this.startValue = startValue;
             this.endValue = endValue;
             this.interpolationCurveName = interpolationCurveName;
-            Console.WriteLine($"I have been given {curveParameters.Length} parameters");
             this.curveParameters = curveParameters;
         }
 
@@ -49,7 +48,6 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             this.startValue = startValue;
             this.endTime = double.NaN;
             this.endValue = double.NaN;
-            Console.WriteLine($"I have been given parameters? {curveParameters == null}");
             this.interpolationCurveName = interpolationCurveName;
             this.curveParameters = curveParameters;
         }
@@ -75,12 +73,12 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             // 0>1;0>0.5;linear;[2,3]
             // 1>2;0.5>1;linear;[]
             // 2>3;1>1;linear;[]
-            
+            Console.WriteLine(input);
             string[] parameters = input.Split(';');
             
             // Time
             string[] times = parameters[0].Split('>');
-            Console.WriteLine($"Parsing {times[0]}");
+            
             startTime = float.Parse(times[0]);
             if (times.Length == 2) // Set the end time if it's been given
                 endTime = float.Parse(times[1]);

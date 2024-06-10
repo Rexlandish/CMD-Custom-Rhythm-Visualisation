@@ -20,18 +20,17 @@ namespace ASCIIMusicVisualiser8
 
             List<List<char>> finalArray = new();
 
-            int xAmount = 13;
-            int yAmount = 13;
+            int xAmount = 32;
+            int yAmount = 32;
 
-            for (int offset = 0; offset <= xAmount; offset++)
+            for (int offset = 0; offset < xAmount; offset++)
             {
                 List<char> currentList = new List<char>();
-                currentList.Add('|');
-                for (int i = 0; i <= yAmount; i++)
+                for (int i = 0; i < yAmount; i++)
                 {
                     // 65 is A ascii
-                    char currentChar = (char)(65 + i + offset);
-
+                    char currentChar = (char)(65 + (i + offset) % 26);
+                    //char currentChar = ' ';
                     currentList.Add(currentChar);
                 }
                 finalArray.Add(currentList);

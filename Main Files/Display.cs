@@ -1,9 +1,9 @@
-﻿using NAudio.Utils;
-using NAudio.Wave;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
+using static ASCIIMusicVisualiser8.Generator;
 using static ASCIIMusicVisualiser8.Utility.ConsoleOp;
 using static ASCIIMusicVisualiser8.Utility.Conversion;
 using static ASCIIMusicVisualiser8.Utility.Creation;
@@ -14,10 +14,6 @@ namespace ASCIIMusicVisualiser8
     {
         public Conductor Conductor { get; private set; }
 
-        // Audio data
-        public double BPM;
-        public string audioFilepath;
-
         // Visual data
         public int updateTimeMilliseconds = 2;
         Vector2 dimensions;
@@ -26,10 +22,8 @@ namespace ASCIIMusicVisualiser8
 
 
 
-        public Display(double BPM, string audioFilepath, Vector2 dimensions)
-        {
-            this.BPM = BPM;
-            this.audioFilepath = audioFilepath;
+        public Display(Vector2 dimensions)
+        { 
             this.dimensions = dimensions;
         }
 
@@ -54,7 +48,7 @@ namespace ASCIIMusicVisualiser8
         }
 
         // Adds multiple generators.
-        public void AddGenerators(List<Generator> gList)
+        public void AddGenerators(params Generator[] gList)
         {
             foreach (Generator g in gList)
             {
@@ -67,94 +61,30 @@ namespace ASCIIMusicVisualiser8
             PrintList(activeGenerators);
         }
 
-        public void Run()
+        public string GetFrameOnBeat(double beat)
         {
+
+            var currentFrameDisplayBoard = Create2DArray(' ', dimensions);
+
+            foreach (var generator in activeGenerators)
+            {
+                DrawLayer(currentFrameDisplayBoard, generator, beat);
+            }
+
+            string charlistToString = StringifyCharlist(currentFrameDisplayBoard);
             
-
-            bool generatorsExist = false;
-
-            if (activeGenerators.Count > 0)
-            {
-                generatorsExist = true;
-            }
-            Console.WriteLine(generatorsExist);
-
-
-            //Thread.Sleep(2000);
-
-            // Set up audio
-            WaveOutEvent waveOutEvent = PlayAudio(audioFilepath);             
-            Conductor = new Conductor(BPM);
-
-
-            while (isActivated)
-            {
-                //Console.WriteLine();
-                //Console.WriteLine($"Value: {graph.GetTime(Conductor.beatsPrecise)}\r");
-
-                // Update conductor with current milliseconds
-                Conductor.SetCurrentTime((long)waveOutEvent.GetPositionTimeSpan().TotalMilliseconds);
-
-                if (generatorsExist)
-                {
-                    var currentFrameDisplayBoard = Create2DArray(' ', dimensions);
-                
-                    foreach (var generator in activeGenerators)
-                    {
-                        DrawLayer(currentFrameDisplayBoard, generator);
-                    }
-                    string charlistToString = StringifyCharlist(currentFrameDisplayBoard);
-
-                    Console.WriteLine(charlistToString);
-                    GoToTopLeft();
-                }
-                Thread.Sleep(updateTimeMilliseconds);
-            }
+            return charlistToString;
         }
+
 
         public void Stop()
         {
             isActivated = false;
         }
 
-        WaveOutEvent PlayAudio(string filename)
+        public static void DrawLayer(List<List<char>> displayBoard, Generator generator, double currentBeat)
         {
-            var reader = new AudioFileReader(filename);
-            var waveOutEvent = new WaveOutEvent();
-            
-            waveOutEvent.Init(reader);
-            waveOutEvent.Play();
-            return waveOutEvent;
-        }
-
-        void DrawLayer(List<List<char>> _displayBoard, Vector2 topLeftPosition, List<List<char>> textToDraw, char? transparentChar = null)
-        {
-
-            int height = _displayBoard.Count;
-            int width = _displayBoard[0].Count;
-
-            // Iterate through each char in textToDraw and change it's corresponding 
-            for (int i = 0; i < textToDraw.Count; i++)
-            {
-                for (int j = 0; j < textToDraw[0].Count; j++)
-                {
-                    Vector2 positionToDraw = new(i + (int)topLeftPosition.X, j + (int)topLeftPosition.Y);
-
-                    // If the coordinates are in bounds, draw the character
-                    if (positionToDraw.X < width && positionToDraw.Y  < height)
-                    {
-                        // If the current character is not transparent, draw it onto the displayBoard
-                        char currentChar = textToDraw[i][j];
-                        if (currentChar != transparentChar) _displayBoard[(int)positionToDraw.X][(int)positionToDraw.Y] = currentChar;
-
-                    }                    
-                }
-            }
-        }
-
-        public void DrawLayer(List<List<char>> displayBoard, Generator generator)
-        {
-            GeneratorOutput gOutput = generator.GetOutput(Conductor.beatsPrecise);
+            GeneratorOutput gOutput = generator.GetOutput(currentBeat);
 
             /*
             // Drawing a layer with effects
@@ -175,8 +105,83 @@ namespace ASCIIMusicVisualiser8
             {
             }
             */
-            DrawLayer(displayBoard, gOutput.position, gOutput.text, gOutput.transparentChar);
+            DrawLayer(displayBoard, gOutput.position, gOutput.text, generator.blendingMode, gOutput.transparentChar);
 
         }
+
+        static void DrawLayer(List<List<char>> _displayBoard, Vector2 topLeftPosition, List<List<char>> textToDraw, BlendingMode blendingMode, char? transparentChar = null)
+        {
+
+            int height = _displayBoard[0].Count;
+            int width = _displayBoard.Count;
+
+
+            // Iterate through each char in textToDraw and change it's corresponding 
+            for (int i = 0; i < textToDraw.Count; i++)
+            {
+                for (int j = 0; j < textToDraw[0].Count; j++)
+                {
+                    Vector2 positionToDraw = new(i + (int)topLeftPosition.X, j + (int)topLeftPosition.Y);
+
+                    // If the coordinates are in bounds, draw the character
+                    if (positionToDraw.X < width && positionToDraw.Y < height && positionToDraw.X >= 0 && positionToDraw.Y >= 0)
+                    {
+                        // If the current character is not transparent, draw it onto the displayBoard
+                        char charToDraw = textToDraw[i][j];
+
+                        char originalChar;
+                        if (i < width && j < height && i >= 0 && j >= 0)
+                        {
+                            originalChar = _displayBoard[i][j];
+                        }
+                        else
+                        {
+                            originalChar = ' ';
+                        }
+                        
+                        char finalChar = CombineChars(originalChar, charToDraw, blendingMode);
+
+                        if (charToDraw != transparentChar) _displayBoard[(int)positionToDraw.X][(int)positionToDraw.Y] = finalChar;
+
+                    }
+                }
+            }
+        }
+
+        public static char CombineChars(char originalChar, char charToDraw, BlendingMode blendingMode)
+        {
+            double originalValue = GetDensityFromChar(originalChar);
+            double valueToDraw = GetDensityFromChar(charToDraw);
+
+
+            switch (blendingMode)
+            {
+                case BlendingMode.InFront:
+                    return charToDraw;
+
+                case BlendingMode.Behind:
+                    if (originalValue == 0)
+                    {
+                        return charToDraw;
+                    }
+                    return originalChar;
+
+                case BlendingMode.Multiply:
+                    return GetCharFromDensity(originalValue * valueToDraw);
+
+                case BlendingMode.Addition:
+                    return GetCharFromDensity(originalValue + valueToDraw);
+
+                case BlendingMode.Subtract:
+                    return GetCharFromDensity(originalValue - valueToDraw);
+
+                case BlendingMode.Without:
+                    return GetCharFromDensity(valueToDraw - originalValue);
+
+                default:
+                    throw new Exception("No blending mode provided!");
+            }
+        }
+
     }
 }

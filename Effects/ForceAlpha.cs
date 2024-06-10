@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using static ASCIIMusicVisualiser8.Utility.Maths;
@@ -34,9 +35,10 @@ namespace ASCIIMusicVisualiser8.Effects
                 transparentChar = GetPluginParameter("char").givenUserParameter[0];
         }
 
-        public override List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, out char newTransparentChar)
+        public override List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)
         {
             newTransparentChar = transparentChar;
+            newDrawPoint = drawPoint;
             return input;
         }
     }

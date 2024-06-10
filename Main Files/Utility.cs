@@ -16,6 +16,69 @@ namespace ASCIIMusicVisualiser8
             T ImportFromString(string input);
         }
 
+        public class ShaderOp
+        {
+
+            public static double HarshSin(double value)
+            {
+                float a = 0.5f;
+                return Math.Sin(value) / (Math.Sqrt(a * a + Math.Sin(value) * Math.Sin(value)));
+            }
+
+            public static float step(float edge, float x)
+            {
+                return x > edge ? 1 : 0;
+            }
+
+            public static float clamp(float x, float min, float max)
+            {
+                return
+                    x < min ? min
+                    :
+                    x > max ? max
+                    :
+                    x;
+            }
+
+            public static float atan(float y, float x)
+            {
+                return (float)Math.Atan2(y, x);
+            }
+
+            public static float cos(float x)
+            {
+                return (float)Math.Cos(x);
+            }
+
+            public static float sin(float x)
+            {
+                return (float)Math.Sin(x);
+            }
+
+            public static float abs(float x)
+            {
+                return (float)Math.Abs(x);
+            }
+
+            public static float max(float x, float y)
+            {
+                return x > y ? x : y;
+            }
+
+            public static float length(Vector2 v)
+            {
+                return (float)v.Length();
+            }
+
+            public static float pow(float x, float y)
+            {
+                return (float)Math.Pow(x, y);
+            }
+
+
+        }
+
+
         public class Repeat
         { 
             static string RepeatNTimes(string stringToRepeat, int repetitions)
@@ -104,6 +167,42 @@ namespace ASCIIMusicVisualiser8
         public class Conversion
         {
 
+
+            static string charShadeString = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
+            public static char GetCharFromDensity(double density)
+            {
+
+                //"0123456789";
+                //" `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"
+
+                //" .:-=+*#%@";
+
+
+                density =
+                    density < 0 ? 0 :
+                    density > 1 ? 1 :
+                    density;
+
+                double index = Math.Round((charShadeString.Length - 1) * density);
+                return charShadeString[(int)index];
+            }
+
+            public static double GetDensityFromChar(char c)
+            {
+                double index = charShadeString.IndexOf(c);
+                if (index == -1)
+                {
+                    return 0.5; // Default value if the character wasn't found in the charShadeString
+                }
+                // Round to the nearest 1/n
+                double amount = index / charShadeString.Length;
+
+                
+                return amount;
+
+
+            }
+
             public static void PrintList<T>(List<T> list)
             {
                 list.ForEach(item => Console.Write(item.ToString() + " "));
@@ -143,10 +242,10 @@ namespace ASCIIMusicVisualiser8
 
             }
 
-            public static Vector2 StringToVector2(string str)
+            public static Vector2 StringToVector2(string str, char delimiter)
             {
-                string[] splitParams = str.Split(' ');
-                return new Vector2(int.Parse(splitParams[0]), int.Parse(splitParams[1]));
+                string[] splitParams = str.Split(delimiter);
+                return new Vector2(float.Parse(splitParams[0]), float.Parse(splitParams[1]));
             }
 
             public static double StringToDouble(string str)
@@ -154,14 +253,28 @@ namespace ASCIIMusicVisualiser8
                 return double.Parse(str);
             }
 
-            public static string ArrayToString<T>(T[] array, bool hasBrackets = true)
+            public static string ArrayToString<T>(T[] array, bool addBrackets = true)
             {
                 string outputString =
-                    hasBrackets ? "[" + string.Join(",", array) + "]"
+                    addBrackets ? "[" + string.Join(",", array) + "]"
                     : string.Join(",", array);
 
                 return outputString;
 
+            }
+
+            public static string List2DToString<T>(List<List<T>> array, bool addBrackets = false)
+            {
+                List<string> finalStringList = new();
+
+                
+                foreach (List<T> t in array)
+                {
+                    string currentString = string.Join("", t);
+                    finalStringList.Add(currentString);
+                }
+                
+                return string.Join("\n", finalStringList);
             }
 
             public static double[] StringToDoubleArray(string str, bool hasBrackets = true)
@@ -196,7 +309,7 @@ namespace ASCIIMusicVisualiser8
                 List<InterpolationPoint> finalList = new();
                 foreach (var parameter in curveVariables)
                 {
-                    Console.WriteLine(string.Join(",", parameter));
+                    //Console.WriteLine(string.Join(",", parameter));
                 }
 
                 for (int i = 0; i < times.Count; i++)
@@ -205,7 +318,7 @@ namespace ASCIIMusicVisualiser8
 
                     foreach (var parameter in newPoint.curveParameters)
                     {
-                        Console.WriteLine(string.Join(",", parameter));
+                        //Console.WriteLine(string.Join(",", parameter));
                     }
 
                     finalList.Add(newPoint);
@@ -230,8 +343,8 @@ namespace ASCIIMusicVisualiser8
                 for (int i = 1; i <= phrases.Count; i++)
                 {
                     string currentPhraseRange = string.Join("", phrases.GetRange(0, i));
-                    Console.WriteLine((i-1).ToString());
-                    Console.WriteLine(currentPhraseRange);
+                    //Console.WriteLine((i-1).ToString());
+                    //Console.WriteLine(currentPhraseRange);
                     finalText.Add(currentPhraseRange);
                 }
 
@@ -248,6 +361,7 @@ namespace ASCIIMusicVisualiser8
                 List<List<T>> finalList = new();
                 for (int i = 0; i < (int)dimensions.Y; i++)
                 {
+                    // New list passes the list by value
                     finalList.Add(new List<T>(row));
                 }
                 return finalList;

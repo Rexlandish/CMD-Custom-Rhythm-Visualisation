@@ -41,7 +41,7 @@ namespace ASCIIMusicVisualiser8.Plugins
             Console.WriteLine(GetPluginParameter("character").givenUserParameter);
             character = GetPluginParameter("character").givenUserParameter[0];
             Console.WriteLine(character);
-            sizeInterpolation.Print();
+            //sizeInterpolation.Print();
         }
 
         public override void InitializeParameters()

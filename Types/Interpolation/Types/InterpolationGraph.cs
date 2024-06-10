@@ -9,6 +9,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
     {
         public List<InterpolationPoint> points { get; private set; } = new();
 
+
         public InterpolationGraph(string stringifiedGraph)
         {
             ImportFromString(stringifiedGraph);
@@ -95,18 +96,17 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
         public InterpolationGraph ImportFromString(string input)
         {
             
-            if (input == null)
+            if (input == null || input == "")
             {
                 // Create default interpolation graph of 1
                 points = new List<InterpolationPoint>()
                 {
-                    new InterpolationPoint(0, 0, 1, 1, "hold", new double[0])
+                    new InterpolationPoint(0, 1, 0, 1, "hold", new double[0])
                 };
             }
             else
             {
                 var interpolationPoints = new List<InterpolationPoint>();
-
                 string[] interpolationPointStrings = input.Split(' ');
                 foreach (string interpolationPointString in interpolationPointStrings)
                 {

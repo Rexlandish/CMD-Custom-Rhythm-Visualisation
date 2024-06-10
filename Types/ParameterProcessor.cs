@@ -17,18 +17,23 @@ namespace ASCIIMusicVisualiser8
 
         protected PluginParameter GetPluginParameter(string parameterName)
         {
-            return pluginParameters.Find((param) => param.parameterName == parameterName);
+            Console.WriteLine($"Looking for {parameterName}");
+            var res = pluginParameters.Find((param) => param.parameterName == parameterName);
+            Console.WriteLine($"Found {res.parameterName}");
+            return res;
         }
 
+        // Handle flags that are not included!!!
         protected void ProcessParameterString(string parameterString)
         {
+
             // Check string for flags
-            MatchCollection matches = Regex.Matches(parameterString, @"(--?\w+)\s+(?:((\S\s*(?!-\w))*|(-\d)|()*)*)+(?!-\w)"); // Thank goodness for https://www.debuggex.com
+            MatchCollection matches = Regex.Matches(parameterString, @"(--?\w+)\s+(?:((\S+\s*(?!--?\w+))*|(-\d)|()*)*)+(?!-\w)"); // Thank goodness for https://www.debuggex.com
             List<string> splitParameters = new();
 
             foreach (var param in pluginParameters)
             {
-                Console.WriteLine($"{param.parameterName} {param.givenUserParameter}");
+                //Console.WriteLine($"{param.parameterName} {param.givenUserParameter}");
             }
 
             // Extract flags and load into plugin
@@ -48,7 +53,7 @@ namespace ASCIIMusicVisualiser8
                 }
 
                 specifiedPluginParameter.SetValue(obj);
-                Console.WriteLine($"{specifiedPluginParameter.parameterName} {specifiedPluginParameter.givenUserParameter}");
+                //Console.WriteLine($"{specifiedPluginParameter.parameterName} {specifiedPluginParameter.givenUserParameter}");
 
 
                 // !------------------ THIS ASSIGNS TO THE BASE CLASS??

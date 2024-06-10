@@ -3,9 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using static ASCIIMusicVisualiser8.Utility.Creation;
+using static ASCIIMusicVisualiser8.Utility.Conversion;
 
 namespace ASCIIMusicVisualiser8
 {
+
+    /// <summary>
+    /// <b>Size</b>: Dimensions for the shader to render on. <i>(--size, -s)</i>
+    /// <b>Threshold Interpolation</b>: Noise level. <i>(--thresholdInterpolation, -tI)</i>
+    /// </summary>
     public class Noise : Plugin, IPlugin
     {
         Random r = new Random();
@@ -13,12 +19,6 @@ namespace ASCIIMusicVisualiser8
 
         InterpolationGraph thresholdInterpolation;
         Vector2 size;
-        string charShadeString = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
-        //" 123456789";
-        // " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"
-
-        //" .:-=+*#%@";
-
 
         /*
         public override List<PluginParameter> PluginParameters
@@ -74,7 +74,7 @@ namespace ASCIIMusicVisualiser8
                 for (int j = 0; j < size.X; j++)
                 {
                     //double opacity = randomBetween >= thresholdInterpolation.GetTime(beat) ? 1 * NextUInt() : 0;//1 * NextUInt() : 0;
-                    double opacity = 0.5 < thresholdInterpolation.GetTime(beat) ? 1 * NextUInt() : 0;//1 * NextUInt() : 0;
+                    double opacity = thresholdInterpolation.GetTime(beat) * NextUInt();//1 * NextUInt() : 0;
                     finalArray[i][j] = GetCharFromDensity(opacity);
                 }
             }
@@ -84,16 +84,6 @@ namespace ASCIIMusicVisualiser8
             return finalArray;
         }
 
-        char GetCharFromDensity(double density)
-        {
-            density = 
-                density < 0 ? 0 :
-                density > 1 ? 1 :
-                density;
-
-            double index = Math.Round((charShadeString.Length - 1) * density);
-            return charShadeString[(int)index];
-        }
 
         //https://www.codeproject.com/Articles/9187/A-fast-equivalent-for-System-Random
         uint x;
@@ -108,7 +98,7 @@ namespace ASCIIMusicVisualiser8
             this.z = z;
         }
 
-        public float NextUInt()
+        public double NextUInt()
         {
             uint t = (x ^ (x << 11));
             x = y;

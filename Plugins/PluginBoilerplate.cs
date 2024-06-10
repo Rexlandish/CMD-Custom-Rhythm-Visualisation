@@ -7,15 +7,12 @@ namespace ASCIIMusicVisualiser8
 {
     public class PluginBoilerplate : Plugin, IPlugin
     {
-
-        public override string pluginName {get => "Swirling Tubes"; }
+        /// <summary>
+        /// <b>Size</b>: Dimensions for the shader to render on. <i>(--size, -s)</i>
+        /// </summary>
+        public override string pluginName {get => "Plugin name"; }
 
         Vector2 size;
-        string charShadeString = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
-        //" 123456789";
-        // " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"
-
-        //" .:-=+*#%@";
 
 
         /*
@@ -65,15 +62,5 @@ namespace ASCIIMusicVisualiser8
             return finalArray;
         }
 
-        char GetCharFromDensity(double density)
-        {
-            density = 
-                density < 0 ? 0 :
-                density > 1 ? 1 :
-                density;
-
-            double index = Math.Round((charShadeString.Length - 1) * density);
-            return charShadeString[(int)index];
-        }
     }
 }

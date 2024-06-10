@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using static ASCIIMusicVisualiser8.Utility.Creation;
+using static ASCIIMusicVisualiser8.Utility.Conversion;
 
 namespace ASCIIMusicVisualiser8
 {
@@ -11,12 +12,6 @@ namespace ASCIIMusicVisualiser8
         public override string pluginName {get => "Swirling Tubes"; }
 
         Vector2 size;
-        string charShadeString = " .:-=+*#%@";
-        //" 123456789";
-        // " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"
-
-        //" .:-=+*#%@";
-
 
         /*
         public override List<PluginParameter> PluginParameters
@@ -37,14 +32,7 @@ namespace ASCIIMusicVisualiser8
         public override void Init()
         {
 
-            string[] vector = GetPluginParameter("size").givenUserParameter.Split(',');
-
-
-            size = new Vector2(
-                float.Parse(vector[0]),
-                float.Parse(vector[1])
-            );
-            
+            size = Utility.Conversion.StringToVector2(GetPluginParameter("size").givenUserParameter, ',');
 
             //! Find a way to get size in from parameters given
             //size = new Vector2(200, 50);
@@ -99,21 +87,6 @@ namespace ASCIIMusicVisualiser8
             return finalArray;
         }
 
-        double HarshSin(double value)
-        {
-            float a = 0.5f;
-            return Math.Sin(value) / (Math.Sqrt(a * a + Math.Sin(value) * Math.Sin(value)));
-        }
 
-        char GetCharFromDensity(double density)
-        {
-            density = 
-                density < 0 ? 0 :
-                density > 1 ? 1 :
-                density;
-
-            double index = Math.Round((charShadeString.Length - 1) * density);
-            return charShadeString[(int)index];
-        }
     }
 }

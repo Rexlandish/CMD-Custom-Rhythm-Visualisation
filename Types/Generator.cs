@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Numerics;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,22 +41,38 @@ namespace ASCIIMusicVisualiser8
 
         public IPlugin plugin;
         public List<Effect> effects = new List<Effect>() { };
+        public List<Generator> subgenerators = new List<Generator>();
 
         public InterpolationGraph interpolationGraph;
+        
+        public BlendingMode blendingMode;
 
-        public Generator(string generatorName, IPlugin plugin, string isActiveInterpolation = null, int layer = 0, List<Effect> effects = null)
+        public enum BlendingMode
+        {
+            InFront, // Default
+            Behind,
+            Multiply,
+            Addition,
+            Subtract,
+            Without
+        }
+
+
+        public Generator(string generatorName, IPlugin plugin, string isActiveInterpolation = null, BlendingMode blendingMode = BlendingMode.InFront, int layer = 0, List<Effect> effects = null)
         {
             this.generatorName = generatorName;
             this.plugin = plugin;
+            this.blendingMode = blendingMode;
             this.layer = layer;
             this.effects = effects ?? new List<Effect>();
             this.interpolationGraph = new InterpolationGraph(isActiveInterpolation);
         }
 
-        public Generator(string generatorName, IPlugin plugin, InterpolationGraph isActiveInterpolation, int layer = 0, List<Effect> effects = null)
+        public Generator(string generatorName, IPlugin plugin, InterpolationGraph isActiveInterpolation, BlendingMode blendingMode = BlendingMode.InFront, int layer = 0, List<Effect> effects = null)
         {
             this.generatorName = generatorName;
             this.plugin = plugin;
+            this.blendingMode = blendingMode;
             this.layer = layer;
             this.effects = effects ?? new List<Effect>();
             this.interpolationGraph = isActiveInterpolation;
@@ -70,15 +87,31 @@ namespace ASCIIMusicVisualiser8
             {
                 List<List<char>> effectOutput = plugin.Generate(currentBeat, out char transparentChar);
 
+                // Combine with the subgenerators
+                
+                for (int i = 0; i < subgenerators.Count; i++)
+                {
+                    Display.DrawLayer(effectOutput, subgenerators[i], currentBeat);
+                }
+                
+
                 char newTransparentChar = transparentChar;
+
+                Vector2 drawPoint = Vector2.Zero;
+
+
                 foreach (Effect effect in effects)
                 {
-                    effectOutput = effect.ApplyTo(effectOutput, currentBeat, transparentChar, out newTransparentChar);
+                    // Update the transparentChar and drawPoint each time
+                    effectOutput = effect.ApplyTo(effectOutput, currentBeat, transparentChar, drawPoint, out newTransparentChar, out Vector2 newDrawPoint);
+                    
+                    drawPoint = newDrawPoint;
+                    transparentChar = newTransparentChar;
                 }
 
                 return new GeneratorOutput(
                     effectOutput,
-                    Vector2.Zero, //! ------------------------ WHEN EFFECTS ARE ADDED, PUT THE EFFECT OUTPUT THROUGH THEM IN THIS FUNCTION AND PUT THE OUTPUT HERE
+                    drawPoint, //! ------------------------ WHEN EFFECTS ARE ADDED, PUT THE EFFECT OUTPUT THROUGH THEM IN THIS FUNCTION AND PUT THE OUTPUT HERE
                     newTransparentChar
                 );
 
@@ -99,6 +132,14 @@ namespace ASCIIMusicVisualiser8
         public void SetPlugin(IPlugin plugin)
         {
             this.plugin = plugin;
+        }
+
+        public void AddSubGenerators(params Generator[] subgens)
+        {
+            foreach (var subgen in subgens)
+            {
+                subgenerators.Add(subgen);
+            }
         }
 
         public void AddEffect(Effect effect)

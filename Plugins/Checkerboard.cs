@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Windows.Input;
 using static ASCIIMusicVisualiser8.Utility.Creation;
+using static ASCIIMusicVisualiser8.Utility.Conversion;
 
 namespace ASCIIMusicVisualiser8
 {
@@ -10,11 +11,17 @@ namespace ASCIIMusicVisualiser8
     {
         /// <summary>
         /// <b>Size</b>: Dimensions for the shader to render on. <i>(--size, -s)</i>
+        /// <b>xSpeed</b>: X scroll speed. <i>(--xSpeed, -xS)</i>
+        /// <b>ySpeed</b>: Y scroll speed. <i>(--ySpeed, -yS)</i>
         /// </summary>
         public override string pluginName {get => "Checkerboard"; }
 
         Vector2 size;
         string charShadeString = " .:-=+*#%@";
+
+        float xSpeed;
+        float ySpeed;
+
         // " 123456789";
         // " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"
         // " .:-=+*#%@";
@@ -32,7 +39,9 @@ namespace ASCIIMusicVisualiser8
             pluginParameters =
             new List<PluginParameter>()
             {
-                new PluginParameter("size", new string[] {"--size", "-s"}, "")
+                new PluginParameter("size", new string[] {"--size", "-s"}, ""),
+                new PluginParameter("xSpeed", new string[] {"--xSpeed", "-xS"}, ""),
+                new PluginParameter("ySpeed", new string[] {"--ySpeed", "-yS"}, "")
             };
         }
 
@@ -46,11 +55,14 @@ namespace ASCIIMusicVisualiser8
                 float.Parse(vector[0]),
                 float.Parse(vector[1])
             );
-            
+
+            xSpeed = float.Parse(GetPluginParameter("xSpeed").givenUserParameter);
+            ySpeed = float.Parse(GetPluginParameter("ySpeed").givenUserParameter);
+
 
             //! Find a way to get size in from parameters given
             //size = new Vector2(200, 50);
-            
+
         }
 
         public double Sin01(double value)
@@ -63,8 +75,8 @@ namespace ASCIIMusicVisualiser8
             //size = new Vector2(60, 5);
             var finalArray = Create2DArray(' ', size);
 
-            double scrollspeedX = 1;
-            double scrollspeedY = -2;
+            double scrollspeedX = xSpeed;
+            double scrollspeedY = ySpeed;
 
 
             for (int i = 0; i < size.Y; i++)
@@ -80,11 +92,11 @@ namespace ASCIIMusicVisualiser8
 
                     double opacity =
                         Math.Sin((_i + (beat * scrollspeedX)) / 4) *
-                        Math.Sin((_j + (beat * scrollspeedY)) / 8)
+                        Math.Sin((_j + (beat * scrollspeedY)) / 4)
                     ;
 
                     //Math.Pow(opacity, 2);
-                    opacity = Saturate(opacity, 0);
+                    //opacity = Saturate(opacity, 0);
 
                     
 
@@ -117,12 +129,5 @@ namespace ASCIIMusicVisualiser8
             return Math.Sin(value) / (Math.Sqrt(a * a + Math.Sin(value) * Math.Sin(value)));
         }
 
-        char GetCharFromDensity(double density)
-        {
-            density = Clamp(density);
-
-            double index = Math.Round((charShadeString.Length - 1) * density);
-            return charShadeString[(int)index];
-        }
     }
 }

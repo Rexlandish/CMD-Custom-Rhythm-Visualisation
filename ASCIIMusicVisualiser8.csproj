@@ -80,15 +80,18 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Effects\Scale.cs" />
+    <Compile Include="Effects\Old\Rotate.cs" />
+    <Compile Include="Effects\EffectBoilerplate.cs" />
+    <Compile Include="Effects\Old\Scale.cs" />
     <Compile Include="Plugins\Dance.cs" />
+    <Compile Include="Plugins\Blank.cs" />
+    <Compile Include="Plugins\SolidColor.cs" />
     <Compile Include="Types\Conductor.cs" />
     <Compile Include="Main Files\Display.cs" />
     <Compile Include="Effects\Effect.cs" />
-    <Compile Include="Effects\Loop.cs" />
     <Compile Include="Effects\ForceAlpha.cs" />
     <Compile Include="Effects\Offset.cs" />
-    <Compile Include="Effects\Position.cs" />
+    <Compile Include="Effects\Transform.cs" />
     <Compile Include="Types\Generator.cs" />
     <Compile Include="Types\ParameterProcessor.cs" />
     <Compile Include="Plugins\Debug.cs" />
@@ -113,6 +116,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="audio\Tidy.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Plugins\VisText.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

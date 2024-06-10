@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using static ASCIIMusicVisualiser8.Utility.Creation;
+using static ASCIIMusicVisualiser8.Utility.Conversion;
 
 namespace ASCIIMusicVisualiser8
 {
@@ -11,11 +12,6 @@ namespace ASCIIMusicVisualiser8
         public override string pluginName {get => "Swirling Tubes"; }
 
         Vector2 size;
-        string charShadeString = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
-        //" 123456789";
-        // " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"
-
-        //" .:-=+*#%@";
 
 
         /*
@@ -33,58 +29,6 @@ namespace ASCIIMusicVisualiser8
                 new PluginParameter("size", new string[] {"--size", "-s"}, "")
             };
         }
-
-
-        float step(float edge, float x)
-        {
-            return x > edge ? 1 : 0;
-        }
-
-        float clamp(float x, float min, float max)
-        {
-            return
-                x < min ? min
-                :
-                x > max ? max
-                :
-                x;
-        }
-
-        float atan(float y, float x)
-        {
-            return (float)Math.Atan2(y, x);
-        }
-
-        float cos(float x)
-        {
-            return (float)Math.Cos(x);
-        }
-
-        float sin(float x)
-        {
-            return (float)Math.Sin(x);
-        }
-
-        float abs(float x)
-        {
-            return (float)Math.Abs(x);
-        }
-
-        float max(float x, float y)
-        {
-            return x > y ? x : y;
-        }
-
-        float length(Vector2 v)
-        {
-            return (float)v.Length();
-        }
-
-        float pow(float x, float y)
-        {
-            return (float)Math.Pow(x, y);
-        }
-
 
         public override void Init()
         {
@@ -133,15 +77,6 @@ namespace ASCIIMusicVisualiser8
             return finalArray;
         }
 
-        char GetCharFromDensity(double density)
-        {
-            density = 
-                density < 0 ? 0 :
-                density > 1 ? 1 :
-                density;
 
-            double index = Math.Round((charShadeString.Length - 1) * density);
-            return charShadeString[(int)index];
-        }
     }
 }
