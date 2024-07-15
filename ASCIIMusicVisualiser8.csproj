@@ -85,6 +85,8 @@
     <Compile Include="Effects\Old\Scale.cs" />
     <Compile Include="Plugins\Dance.cs" />
     <Compile Include="Plugins\Blank.cs" />
+    <Compile Include="Plugins\Dotsies.cs" />
+    <Compile Include="Plugins\ExampleDisplays.cs" />
     <Compile Include="Plugins\SolidColor.cs" />
     <Compile Include="Types\Conductor.cs" />
     <Compile Include="Main Files\Display.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="Effects\Offset.cs" />
     <Compile Include="Effects\Transform.cs" />
     <Compile Include="Types\Generator.cs" />
+    <Compile Include="Types\IHierarchy.cs" />
     <Compile Include="Types\ParameterProcessor.cs" />
     <Compile Include="Plugins\Debug.cs" />
     <Compile Include="Plugins\Noise.cs" />

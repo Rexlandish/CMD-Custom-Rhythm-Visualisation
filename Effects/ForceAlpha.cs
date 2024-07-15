@@ -16,7 +16,10 @@ namespace ASCIIMusicVisualiser8.Effects
     public class ForceAlpha : Effect
     {
 
-        char transparentChar;
+        char forcedTransparentChar;
+
+        public ForceAlpha() : base() { }
+        public ForceAlpha(string parameterString) : base(parameterString) {}
 
         public override void InitializeParameters()
         {
@@ -26,18 +29,24 @@ namespace ASCIIMusicVisualiser8.Effects
             };
         }
 
+        public override string ShowParameterValues(double time)
+        {
+            return $"{forcedTransparentChar}";
+        }
+
         public override void Init()
         {
-            // 
+
             if (GetPluginParameter("char").givenUserParameter == "[]")
-                transparentChar = ' ';
+                forcedTransparentChar = ' ';
             else
-                transparentChar = GetPluginParameter("char").givenUserParameter[0];
+                forcedTransparentChar = GetPluginParameter("char").givenUserParameter[0];
+            name = $"Forced Alpha";
         }
 
         public override List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)
         {
-            newTransparentChar = transparentChar;
+            newTransparentChar = forcedTransparentChar;
             newDrawPoint = drawPoint;
             return input;
         }

@@ -5,7 +5,7 @@ using static ASCIIMusicVisualiser8.Utility.Maths;
 
 namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
 {
-    internal class InterpolationGraph : IStringable<InterpolationGraph>
+    public class InterpolationGraph : IStringable<InterpolationGraph>
     {
         public List<InterpolationPoint> points { get; private set; } = new();
 
@@ -101,7 +101,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
                 // Create default interpolation graph of 1
                 points = new List<InterpolationPoint>()
                 {
-                    new InterpolationPoint(0, 1, 0, 1, "hold", new double[0])
+                    new InterpolationPoint(0, 1, 1, 1, "hold", new double[0])
                 };
             }
             else

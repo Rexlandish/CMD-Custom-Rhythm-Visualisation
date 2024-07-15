@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Xml.Linq;
+using static ASCIIMusicVisualiser8.Generator;
 
 namespace ASCIIMusicVisualiser8
 {
@@ -169,9 +171,9 @@ namespace ASCIIMusicVisualiser8
 
 
             static string charShadeString = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
+
             public static char GetCharFromDensity(double density)
             {
-
                 //"0123456789";
                 //" `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"
 
@@ -186,6 +188,7 @@ namespace ASCIIMusicVisualiser8
                 double index = Math.Round((charShadeString.Length - 1) * density);
                 return charShadeString[(int)index];
             }
+
 
             public static double GetDensityFromChar(char c)
             {
@@ -409,6 +412,55 @@ namespace ASCIIMusicVisualiser8
                 {
                     return textFile.ReadToEnd();
                 }
+            }
+        }
+
+        public class Visualisation
+        {
+            public static Dictionary<BlendingMode, char> blendSymbolDictionary = new Dictionary<BlendingMode, char>()
+            {
+                {BlendingMode.Subtract, '-'},
+                {BlendingMode.Multiply, '*'},
+                {BlendingMode.Addition, '+'},
+                {BlendingMode.Without, '!'},
+                {BlendingMode.Behind, 'v'},
+                {BlendingMode.InFront, ' '},
+            };
+
+            public static void PrintHierarchy(string name, string indent, bool last, bool hasChildren, bool addExtraLine, bool isActive, out string newIndent, ConsoleColor consoleColor = ConsoleColor.White)            {
+                
+                Console.Write(indent);
+
+                newIndent = indent;
+
+                if (last)
+                {
+                    Console.Write("└");
+                    newIndent += "  ";
+                }
+                else
+                {
+                    Console.Write("├");
+                    newIndent += "│ ";
+                }
+
+                if (isActive)
+                {
+                    Console.ForegroundColor = consoleColor;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                }
+
+                Console.WriteLine($"{name}                            ");
+                Console.ForegroundColor = ConsoleColor.White;
+
+                if (last & !hasChildren)
+                {
+                    Console.WriteLine(newIndent);
+                }
+
             }
         }
 

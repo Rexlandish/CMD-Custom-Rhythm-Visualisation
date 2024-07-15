@@ -62,5 +62,10 @@ namespace ASCIIMusicVisualiser8
             return finalArray;
         }
 
+        public override string ShowParameterValues(double time)
+        {
+            return "";
+        }
+
     }
 }

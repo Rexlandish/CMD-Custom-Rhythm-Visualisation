@@ -38,9 +38,7 @@ namespace ASCIIMusicVisualiser8.Plugins
         public override void Init()
         {
             sizeInterpolation = new(GetPluginParameter("sizeInterpolation").givenUserParameter);
-            Console.WriteLine(GetPluginParameter("character").givenUserParameter);
             character = GetPluginParameter("character").givenUserParameter[0];
-            Console.WriteLine(character);
             //sizeInterpolation.Print();
         }
 
@@ -52,6 +50,11 @@ namespace ASCIIMusicVisualiser8.Plugins
                 new PluginParameter("sizeInterpolation", new string[] {"--sizeInterpolation", "-sI"}, ""),
                 new PluginParameter("character", new string[] {"--character", "-c"}, ""),
             };
+        }
+
+        public override string ShowParameterValues(double time)
+        {
+            return $"-sI {sizeInterpolation.GetTime(time)} -c {character}";
         }
     }
 }

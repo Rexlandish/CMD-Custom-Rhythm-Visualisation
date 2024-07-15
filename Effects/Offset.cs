@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,9 @@ namespace ASCIIMusicVisualiser8.Effects
         InterpolationGraph xOffsetInterpolation;
         InterpolationGraph yOffsetInterpolation;
 
+        public Offset() : base() { }
+        public Offset(string parameterString) : base(parameterString) { }
+
         public override void InitializeParameters()
         {
             pluginParameters = new List<PluginParameter>
@@ -33,6 +37,13 @@ namespace ASCIIMusicVisualiser8.Effects
         {
             xOffsetInterpolation = new InterpolationGraph(GetPluginParameter("xOffsetInterpolation").givenUserParameter);
             yOffsetInterpolation = new InterpolationGraph(GetPluginParameter("yOffsetInterpolation").givenUserParameter);
+
+            name = $"Offset";
+        }
+
+        public override string ShowParameterValues(double time)
+        {
+            return $"<{xOffsetInterpolation.GetTime(time).ToString("0.00")}, {yOffsetInterpolation.GetTime(time).ToString("0.00")}>";
         }
 
         public override List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)

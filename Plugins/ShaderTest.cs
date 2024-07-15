@@ -121,5 +121,9 @@ namespace ASCIIMusicVisualiser8
             transparentChar = ' ';
             return finalArray;
         }
+        public override string ShowParameterValues(double time)
+        {
+            return "...";
+        }
     }
 }

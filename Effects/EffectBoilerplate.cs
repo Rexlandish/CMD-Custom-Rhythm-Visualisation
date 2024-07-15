@@ -16,10 +16,9 @@ namespace ASCIIMusicVisualiser8.Effects
     public class EffectName : Effect
     {
         
+        
         // Variables here
-        InterpolationGraph scaleFactorInterpolation;
-        InterpolationGraph xCenterInterpolation;
-        InterpolationGraph yCenterInterpolation;
+        InterpolationGraph interpolationGraph;
 
         public override void InitializeParameters()
         {
@@ -36,8 +35,15 @@ namespace ASCIIMusicVisualiser8.Effects
             */
         }
 
+        public override string ShowParameterValues(double time)
+        {
+            return "...";
+        }
+
         public override void Init()
         {
+            name = "Effectname";
+
             /*
             scaleFactorInterpolation = new InterpolationGraph(GetPluginParameter("scaleFactorInterpolation").givenUserParameter);
             xCenterInterpolation = new InterpolationGraph(GetPluginParameter("xCenterInterpolation").givenUserParameter);

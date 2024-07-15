@@ -102,5 +102,21 @@ namespace ASCIIMusicVisualiser8.Plugins
                 new PluginParameter("delimiter", new string[] {"--delimiter", "-d"}, ""),
             };
         }
+
+        public override string ShowParameterValues(double time)
+        {
+            int index = (int)Math.Floor(positionInterpolation.GetTime(time));
+            /*
+            Console.WriteLine($"{index} {phraseFrames.Count}");
+            string textToShow = string.Join("", phraseFrames[index]);
+            
+            if (textToShow.Length <= 10)
+                return $"{textToShow}";
+            
+            return $"-OVERFLOW-";
+            */
+
+            return $"Frame {index}";
+        }
     }
 }

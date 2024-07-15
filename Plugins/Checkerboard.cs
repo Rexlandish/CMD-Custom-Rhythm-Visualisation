@@ -17,7 +17,6 @@ namespace ASCIIMusicVisualiser8
         public override string pluginName {get => "Checkerboard"; }
 
         Vector2 size;
-        string charShadeString = " .:-=+*#%@";
 
         float xSpeed;
         float ySpeed;
@@ -65,6 +64,12 @@ namespace ASCIIMusicVisualiser8
 
         }
 
+        public override string ShowParameterValues(double time)
+        {
+            return $"-s {size}";
+        }
+
+
         public double Sin01(double value)
         {
             return (Math.Sin(value) + 1)/2;
@@ -91,10 +96,11 @@ namespace ASCIIMusicVisualiser8
 
 
                     double opacity =
-                        Math.Sin((_i + (beat * scrollspeedX)) / 4) *
-                        Math.Sin((_j + (beat * scrollspeedY)) / 4)
+                        Math.Sin((_i + (beat * scrollspeedX)) / 1) *
+                        Math.Sin((_j + (beat * scrollspeedY)) / 1)
                     ;
 
+                    opacity -= 0.1;
                     //Math.Pow(opacity, 2);
                     //opacity = Saturate(opacity, 0);
 

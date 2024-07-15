@@ -49,6 +49,7 @@ namespace ASCIIMusicVisualiser8
             
         }
 
+
         public override List<List<char>> Generate(double beat, out char transparentChar)
         {
 
@@ -60,6 +61,11 @@ namespace ASCIIMusicVisualiser8
 
             transparentChar = ' ';
             return finalArray;
+        }
+
+        public override string ShowParameterValues(double time)
+        {
+            return "...";
         }
 
     }

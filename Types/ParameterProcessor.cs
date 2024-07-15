@@ -13,14 +13,17 @@ namespace ASCIIMusicVisualiser8
         // Create the parameters at runtime
         public virtual void InitializeParameters() { }
 
-        protected List<PluginParameter> pluginParameters;
+        protected List<PluginParameter> pluginParameters = new();
 
         protected PluginParameter GetPluginParameter(string parameterName)
         {
-            Console.WriteLine($"Looking for {parameterName}");
             var res = pluginParameters.Find((param) => param.parameterName == parameterName);
-            Console.WriteLine($"Found {res.parameterName}");
             return res;
+        }
+
+        public virtual string ShowParameterValues(double time)
+        {
+            return "...";
         }
 
         // Handle flags that are not included!!!
@@ -60,5 +63,7 @@ namespace ASCIIMusicVisualiser8
 
             }
         }
+
+
     }
 }

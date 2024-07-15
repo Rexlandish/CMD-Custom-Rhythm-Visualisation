@@ -1,19 +1,16 @@
 ﻿using ASCIIMusicVisualiser8.Effects;
+using ASCIIMusicVisualiser8.Types;
 using ASCIIMusicVisualiser8.Types.Interpolation.Types;
-using NAudio.CoreAudioApi;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
 using System.Numerics;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
+using static ASCIIMusicVisualiser8.Utility;
+using static ASCIIMusicVisualiser8.Utility.Visualisation;
 
 namespace ASCIIMusicVisualiser8
 {
 
-    internal class GeneratorOutput
+    public class GeneratorOutput
     {
         public List<List<char>> text;
         public char? transparentChar;
@@ -32,10 +29,10 @@ namespace ASCIIMusicVisualiser8
         }
     }
 
-    internal class Generator
+    public class Generator : IHierarchy
     {
 
-        string generatorName;
+        public string name { get; set; }
 
         public int layer = 0;
 
@@ -43,7 +40,7 @@ namespace ASCIIMusicVisualiser8
         public List<Effect> effects = new List<Effect>() { };
         public List<Generator> subgenerators = new List<Generator>();
 
-        public InterpolationGraph interpolationGraph;
+        public InterpolationGraph activeInterpolationGraph;
         
         public BlendingMode blendingMode;
 
@@ -60,22 +57,22 @@ namespace ASCIIMusicVisualiser8
 
         public Generator(string generatorName, IPlugin plugin, string isActiveInterpolation = null, BlendingMode blendingMode = BlendingMode.InFront, int layer = 0, List<Effect> effects = null)
         {
-            this.generatorName = generatorName;
+            this.name = generatorName;
             this.plugin = plugin;
             this.blendingMode = blendingMode;
             this.layer = layer;
             this.effects = effects ?? new List<Effect>();
-            this.interpolationGraph = new InterpolationGraph(isActiveInterpolation);
+            this.activeInterpolationGraph = new InterpolationGraph(isActiveInterpolation);
         }
 
         public Generator(string generatorName, IPlugin plugin, InterpolationGraph isActiveInterpolation, BlendingMode blendingMode = BlendingMode.InFront, int layer = 0, List<Effect> effects = null)
         {
-            this.generatorName = generatorName;
+            this.name = generatorName;
             this.plugin = plugin;
             this.blendingMode = blendingMode;
             this.layer = layer;
             this.effects = effects ?? new List<Effect>();
-            this.interpolationGraph = isActiveInterpolation;
+            this.activeInterpolationGraph = isActiveInterpolation;
         }
 
         public GeneratorOutput GetOutput(double currentBeat)
@@ -83,7 +80,7 @@ namespace ASCIIMusicVisualiser8
             // if the isActive interpolation graph is larger than 0.5, render the effect output.
             // Otherwise, return nothing.
 
-            if (interpolationGraph.GetTime(currentBeat) >= 0.5)
+            if (activeInterpolationGraph.GetTime(currentBeat) >= 0.5)
             {
                 List<List<char>> effectOutput = plugin.Generate(currentBeat, out char transparentChar);
 
@@ -147,11 +144,46 @@ namespace ASCIIMusicVisualiser8
             effects.Add(effect);
         }
 
+        public void AddEffects(params Effect[] effectList)
+        {
+            foreach (Effect e in effectList)
+                effects.Add(e);
+        }
+
 
         public override string ToString()
         {
-            return $"[{generatorName}] {plugin.pluginName}, Layer {layer}";
+            return $"[{name}] {plugin.pluginName}, Layer {layer}";
         }
+
+        //https://stackoverflow.com/questions/1649027/how-do-i-print-out-a-tree-structure
+        public void HandleNext(string indent, bool last, double time, bool isParentActive)
+        {
+
+            bool hasChildren = subgenerators.Count > 0 | effects.Count > 0;
+
+            //{name}
+            string newName = $"{plugin.pluginName} ({name}) {blendSymbolDictionary[blendingMode]} [{plugin.@class.ShowParameterValues(time)}]";
+
+            // Show this generator as active only if it's parent is active too
+            bool isGeneratorActive = activeInterpolationGraph.GetTime(time) >= 0.5 && isParentActive;
+            ConsoleColor isActiveColor = isGeneratorActive ? ConsoleColor.Red : ConsoleColor.DarkGray;
+            newName = isGeneratorActive ?  newName: newName;
+
+            PrintHierarchy(newName, indent, last, hasChildren, false, isParentActive, out string newIndent, isActiveColor);
+
+            for (int i = 0; i < effects.Count; i++)
+                //effects[i].HandleNext(newIndent, i == effects.Count - 1);
+                effects[i].HandleNext(newIndent, i == effects.Count - 1 && subgenerators.Count == 0, time, isGeneratorActive);
+            // Make this node an end node if there aren't any subgenerators to come after
+
+            
+            for (int i = 0; i < subgenerators.Count; i++)
+                subgenerators[i].HandleNext(newIndent, i == subgenerators.Count - 1, time, isGeneratorActive);
+
+
+        }
+
 
     }
 }

@@ -30,7 +30,7 @@ namespace ASCIIMusicVisualiser8
         }
     }
 
-    interface IPlugin
+    public interface IPlugin
     {
         //List<PluginParameter> PluginParameters { get; }
         abstract List<List<char>> Generate(double beat, out char transparentChar);
@@ -46,6 +46,11 @@ namespace ASCIIMusicVisualiser8
         
         public abstract string pluginName { get; }
         public Plugin @class => this;
+
+        public override string ShowParameterValues(double time)
+        {
+            return "...";
+        }
 
         public void ProcessParameterStringPlugin(string parameterString)
         {

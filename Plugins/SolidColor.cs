@@ -24,6 +24,16 @@ namespace ASCIIMusicVisualiser8
         }
         */
 
+        public SolidColor()
+        {
+
+        }
+
+        public SolidColor(string parameterString)
+        {
+            ProcessParameterStringPlugin(parameterString);
+        }
+
         public override void InitializeParameters()
         {
             pluginParameters =
@@ -54,7 +64,6 @@ namespace ASCIIMusicVisualiser8
 
         public override List<List<char>> Generate(double beat, out char transparentChar)
         {
-            
             char fillChar = Utility.Conversion.GetCharFromDensity(brightness.GetTime(beat));
             List<List<char>> finalArray = Utility.Creation.Create2DArray(fillChar, size);
 
@@ -66,5 +75,9 @@ namespace ASCIIMusicVisualiser8
             return finalArray;
         }
 
+        public override string ShowParameterValues(double time)
+        {
+            return $"-b {brightness.GetTime(time).ToString("0.00")}";
+        }
     }
 }

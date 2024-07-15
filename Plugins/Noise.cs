@@ -107,5 +107,10 @@ namespace ASCIIMusicVisualiser8
             uint finalUInt = (w = (w ^ (w >> 19)) ^ (t ^ (t >> 8)));
             return finalUInt / 3999999999f - 0.1f;
         }
+
+        public override string ShowParameterValues(double time)
+        {
+            return $"-tI {thresholdInterpolation.GetTime(time)}";
+        }
     }
 }

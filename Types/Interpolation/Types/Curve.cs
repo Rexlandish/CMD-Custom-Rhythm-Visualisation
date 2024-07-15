@@ -31,6 +31,8 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
                     return EaseInOutSin(t);
                 case "cos":
                     return Cos(t, curveVariables);
+                case "bounce":
+                    return Bounce(t, curveVariables);
                 default:
                     throw new Exception($"Interpolation {name} not found.");
             }
@@ -100,6 +102,11 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
         static double EaseInOutSin(double t)
         {
             return -(Math.Cos(Math.PI * t) - 1) / 2;
+        }
+
+        static double Bounce(double t, double[] curveVariables)
+        {
+            return 2 * Math.Abs(Cos(t, curveVariables) - 0.5);
         }
     }
 }

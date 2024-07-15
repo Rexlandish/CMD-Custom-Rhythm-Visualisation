@@ -57,6 +57,8 @@ namespace ASCIIMusicVisualiser8.Effects
             rotationInterpolation = new InterpolationGraph(res);
 
             scaleInterpolation = new InterpolationGraph(GetPluginParameter("scaleInterpolation").givenUserParameter);
+
+            name = "Transform";
         }
 
         public override List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)
@@ -202,10 +204,8 @@ namespace ASCIIMusicVisualiser8.Effects
 
 
             //! CALCULATE THE VECTOR2 DIMENSIONS BASED ON THE INPUT SIZE AND THE ROTATION AMOUNT
+            // (done)
             //List<List<char>> finalGrid = Utility.Creation.Create2DArray(transparentChar, new(10, 10));
-
-
-            // Find out why the data is not being written to the right place!!!!!!
 
             for (int y_ = 0; y_ < rotatedHeight; y_++)
             {
@@ -285,15 +285,17 @@ namespace ASCIIMusicVisualiser8.Effects
 
                     finalGrid[targetY][targetX] = sampledChar;
 
-                    //finalGrid[y][x] = '#';
+                    //finalGrid[y][x] = '';
                 }
             }
 
             //finalGrid[(int)rotatedCenter.Y][(int)rotatedCenter.X] = '!';
 
             newTransparentChar = transparentChar;
-            newDrawPoint = drawPoint - new Vector2((int)rotatedCenter.Y, (int)rotatedCenter.X) + center;
+            newDrawPoint = drawPoint - new Vector2((int)rotatedCenter.Y, (int)rotatedCenter.X) + new Vector2(center.Y, center.X);
 
+            
+            //finalGrid[0][0] = '=';
             return finalGrid;
         }
 
@@ -368,6 +370,13 @@ namespace ASCIIMusicVisualiser8.Effects
 
             return new(originalPoint.X + newX, originalPoint.Y + newY);
 
+        }
+
+        public override string ShowParameterValues(double time)
+        {
+            return $"xyPos <{xPosInterpolation.GetTime(time).ToString("0.00")},{yPosInterpolation.GetTime(time).ToString("0.00")}> " +
+                $"-rI {rotationInterpolation.GetTime(time).ToString("0.00")} " +
+                $"-sI {scaleInterpolation.GetTime(time).ToString("0.00")}";
         }
 
     }

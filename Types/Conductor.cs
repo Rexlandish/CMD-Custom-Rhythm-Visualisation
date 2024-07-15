@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ASCIIMusicVisualiser8
 {
-    internal class Conductor
+    public class Conductor
     {
         // Handles seconds to beat conversion from a hypothetical audio
 

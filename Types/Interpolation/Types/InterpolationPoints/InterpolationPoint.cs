@@ -73,7 +73,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             // 0>1;0>0.5;linear;[2,3]
             // 1>2;0.5>1;linear;[]
             // 2>3;1>1;linear;[]
-            Console.WriteLine(input);
+            
             string[] parameters = input.Split(';');
             
             // Time

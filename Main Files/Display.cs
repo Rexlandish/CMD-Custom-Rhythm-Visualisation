@@ -1,18 +1,21 @@
 ﻿
+using ASCIIMusicVisualiser8.Types;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
+using System.Xml.Linq;
 using static ASCIIMusicVisualiser8.Generator;
-using static ASCIIMusicVisualiser8.Utility.ConsoleOp;
+using static ASCIIMusicVisualiser8.Utility.Visualisation;
 using static ASCIIMusicVisualiser8.Utility.Conversion;
 using static ASCIIMusicVisualiser8.Utility.Creation;
 
 namespace ASCIIMusicVisualiser8
 {
-    internal class Display
+    public class Display : IHierarchy
     {
         public Conductor Conductor { get; private set; }
+        public string name { get => "Display"; }
 
         // Visual data
         public int updateTimeMilliseconds = 2;
@@ -84,6 +87,7 @@ namespace ASCIIMusicVisualiser8
 
         public static void DrawLayer(List<List<char>> displayBoard, Generator generator, double currentBeat)
         {
+            
             GeneratorOutput gOutput = generator.GetOutput(currentBeat);
 
             /*
@@ -183,5 +187,18 @@ namespace ASCIIMusicVisualiser8
             }
         }
 
+        public void PrettyPrint(double time)
+        {
+            HandleNext("", false, time, true);
+        }
+
+        public void HandleNext(string indent, bool last, double time, bool isActive)
+        {
+
+            PrintHierarchy(name, indent, last, true, false, isActive, out string newIndent);
+
+            for (int i = 0; i < activeGenerators.Count; i++)
+                activeGenerators[i].HandleNext(newIndent, i == activeGenerators.Count - 1, time, isActive);
+        }
     }
 }

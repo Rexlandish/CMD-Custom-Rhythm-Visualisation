@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ASCIIMusicVisualiser8.Types.Interpolation.Types;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using static ASCIIMusicVisualiser8.Utility.Creation;
@@ -42,6 +43,11 @@ namespace ASCIIMusicVisualiser8
 
             transparentChar = new char();
             return finalArray;
+        }
+
+        public override string ShowParameterValues(double time)
+        {
+            return "...";
         }
     }
 }
