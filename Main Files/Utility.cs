@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
 using static ASCIIMusicVisualiser8.Generator;
 
@@ -172,8 +173,15 @@ namespace ASCIIMusicVisualiser8
 
             static string charShadeString = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 
-            public static char GetCharFromDensity(double density)
+            static Dictionary<char, double> charShadeStringDict = new Dictionary<char, double>();
+            
+            public static bool initializeCharShadeStringDict = false;
+
+            public static char GetCharFromBrightness(double density)
             {
+                if (!initializeCharShadeStringDict)
+                    throw new Exception("Char shade string dict not initialized! Please run Utility.Conversion.InitializeCharShadeStringDict() at the start of the program.");
+
                 //"0123456789";
                 //" `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"
 
@@ -189,20 +197,30 @@ namespace ASCIIMusicVisualiser8
                 return charShadeString[(int)index];
             }
 
+            public static void InitializeCharShadeStringDict()
+            {
+
+                initializeCharShadeStringDict = true;
+            }
+            
 
             public static double GetDensityFromChar(char c)
             {
+                throw new Exception("PLEASE DO NOT USE GETDENSITYFROMCHAR ANYMORE; OUTPUTPIXEL HAS MADE THIS REDUNDANT!");
+                if (!initializeCharShadeStringDict)
+                    throw new Exception("Char shade string dict not initialized! Please run Utility.Conversion.InitializeCharShadeStringDict() at the start of the program.");
+
                 double index = charShadeString.IndexOf(c);
                 if (index == -1)
                 {
-                    return 0.5; // Default value if the character wasn't found in the charShadeString
+                    return 1; // Default value if the character wasn't found in the charShadeString
                 }
                 // Round to the nearest 1/n
-                double amount = index / charShadeString.Length;
+
+                double amount = index / (charShadeString.Length - 1);
 
                 
                 return amount;
-
 
             }
 
@@ -225,7 +243,28 @@ namespace ASCIIMusicVisualiser8
                 return finalList;
             }
 
-            public static string StringifyCharlist(List<List<char>> charList)
+            public static string StringifyOutputPixel2DArray(List<List<OutputPixel>> op2DList)
+            {
+                List<string> finalString = new();
+
+                foreach (List<OutputPixel> opList in op2DList)
+                {
+                    string currentRow = "";
+                    foreach (OutputPixel op in opList)
+                    {
+                        currentRow += op.GetOutput();
+                    }
+
+                    finalString.Add(currentRow);
+
+                }
+
+                return string.Join("\n", finalString);
+
+            }
+
+            /*
+            public static string StringifyCharlist(List<List<OutputPixel>> charList)
             {
                 List<string> finalString = new();
 
@@ -244,6 +283,7 @@ namespace ASCIIMusicVisualiser8
                 return string.Join("\n", finalString);
 
             }
+            */
 
             public static Vector2 StringToVector2(string str, char delimiter)
             {

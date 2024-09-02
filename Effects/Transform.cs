@@ -1,8 +1,10 @@
 ﻿using ASCIIMusicVisualiser8.Types.Interpolation.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using static ASCIIMusicVisualiser8.Utility.Maths;
@@ -31,6 +33,10 @@ namespace ASCIIMusicVisualiser8.Effects
         InterpolationGraph rotationInterpolation;
 
         InterpolationGraph scaleInterpolation;
+
+        long posTime;
+        long scaleTime;
+        long rotTime;
 
         public Transform() : base() {}
         public Transform(string parameterString) : base(parameterString) {}
@@ -61,30 +67,43 @@ namespace ASCIIMusicVisualiser8.Effects
             name = "Transform";
         }
 
-        public override List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)
+        public override List<List<OutputPixel>> ApplyTo(List<List<OutputPixel>> input, double beat, OutputPixel transparentChar, Vector2 drawPoint, out OutputPixel newTransparentChar, out Vector2 newDrawPoint)
         {
-            List<List<char>> currentGrid = input;
-            char currentTransparentChar = transparentChar;
+            var watch = Stopwatch.StartNew();
+            List<List<OutputPixel>> currentGrid = input;
+            OutputPixel currentTransparentChar = transparentChar;
             Vector2 currentDrawPoint = drawPoint;
 
             // FIX APPLY SCALE NOT WORKING PROPERLY
-            
+
+
+            var scaleT = Stopwatch.StartNew();
             currentGrid = ApplyScale(currentGrid, beat, currentTransparentChar, currentDrawPoint, out currentTransparentChar, out currentDrawPoint);
-            
+            scaleT.Stop();
+            scaleTime = scaleT.ElapsedTicks;
+
             // Position is fine
+            var posT = Stopwatch.StartNew();
             currentGrid = ApplyPosition(currentGrid, beat, currentTransparentChar, currentDrawPoint, out currentTransparentChar, out currentDrawPoint);
-            
-            // Rotation is NOT fine
+            posT.Stop();
+            posTime = posT.ElapsedTicks;
+
+            // --Rotation is NOT fine--
+            // IT IS NOW!!!
+            var rotT = Stopwatch.StartNew();
             currentGrid = ApplyRotation(currentGrid, beat, currentTransparentChar, currentDrawPoint, out currentTransparentChar, out currentDrawPoint);
-            
+            rotT.Stop();
+            rotTime = rotT.ElapsedTicks;
 
             newTransparentChar = currentTransparentChar;
             newDrawPoint = currentDrawPoint;
 
+            watch.Stop();
+            lastExecutedTime = watch.ElapsedTicks;
             return currentGrid;
         }
 
-        List<List<char>> ApplyPosition(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)
+        List<List<OutputPixel>> ApplyPosition(List<List<OutputPixel>> input, double beat, OutputPixel transparentChar, Vector2 drawPoint, out OutputPixel newTransparentChar, out Vector2 newDrawPoint)
         {
 
             newTransparentChar = transparentChar;
@@ -101,7 +120,7 @@ namespace ASCIIMusicVisualiser8.Effects
             
             /*
 
-            List<List<char>> finalGrid = new List<List<char>>();
+            List<List<OutputPixel>> finalGrid = new List<List<OutputPixel>>();
 
             int originalXLength = input[0].Count;
             int x = (int)Math.Round(xPositionInterpolation.GetTime(beat));
@@ -174,15 +193,10 @@ namespace ASCIIMusicVisualiser8.Effects
         }
 
 
-        List<List<char>> ApplyRotation(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)
+        List<List<OutputPixel>> ApplyRotation(List<List<OutputPixel>> input, double beat, OutputPixel transparentChar, Vector2 drawPoint, out OutputPixel newTransparentChar, out Vector2 newDrawPoint)
         {
 
-            float rotationAmount = (float)rotationInterpolation.GetTime(beat);
-
-            // Convert degrees to radians
-            rotationAmount /= 180f;
-            rotationAmount *= (float)Math.PI;
-
+            float rotationAmount = (float)(rotationInterpolation.GetTime(beat) * Math.PI / 180);
 
 
             int width = input[0].Count;
@@ -191,9 +205,8 @@ namespace ASCIIMusicVisualiser8.Effects
             int rotatedWidth = (int)Math.Round(Math.Abs(width * Math.Cos(rotationAmount)) + Math.Abs(height * Math.Sin(rotationAmount)));
             int rotatedHeight = (int)Math.Round(Math.Abs(height * Math.Cos(rotationAmount)) + Math.Abs(width * Math.Sin(rotationAmount)));
 
-            //List<List<char>> finalGrid = Utility.Creation.Create2DArray(transparentChar, new(100, 100));
-            List<List<char>> finalGrid = Utility.Creation.Create2DArray(transparentChar, new(rotatedWidth, rotatedHeight));
-            //List<List<char>> finalGrid = Utility.Creation.Create2DArray(transparentChar, new(width * 16, height * 16));
+            List<List<OutputPixel>> finalGrid = Utility.Creation.Create2DArray(transparentChar, new(rotatedWidth, rotatedHeight));
+            //List<List<OutputPixel>> finalGrid = Utility.Creation.Create2DArray(transparentChar, new(width * 16, height * 16));
             //Console.WriteLine($"{rotatedWidth} {rotatedHeight} {width} {height}");
             Vector2 center = new(width / 2f, height / 2f);
             Vector2 rotatedCenter = new(rotatedWidth / 2f, rotatedHeight / 2f);
@@ -205,7 +218,7 @@ namespace ASCIIMusicVisualiser8.Effects
 
             //! CALCULATE THE VECTOR2 DIMENSIONS BASED ON THE INPUT SIZE AND THE ROTATION AMOUNT
             // (done)
-            //List<List<char>> finalGrid = Utility.Creation.Create2DArray(transparentChar, new(10, 10));
+            //List<List<OutputPixel>> finalGrid = Utility.Creation.Create2DArray(transparentChar, new(10, 10));
 
             for (int y_ = 0; y_ < rotatedHeight; y_++)
             {
@@ -215,18 +228,19 @@ namespace ASCIIMusicVisualiser8.Effects
                     int y = y_ + (int)center.Y - (int)rotatedCenter.Y;
                     int x = x_ + (int)center.X - (int)rotatedCenter.X;
 
-                    Vector2 pointToSampleFrom = RotatePointAround(center, new(x, y), -rotationAmount);
 
+
+                    Vector2 pointToSampleFrom = RotatePointAround(center, new(x, y), -rotationAmount);
+                    
                     //pointToSampleFrom += rotationCenter/2;
 
-                    int sampleX = (int)(Math.Floor(pointToSampleFrom.X));
-                    int sampleY = (int)(Math.Floor(pointToSampleFrom.Y));
-
+                    int sampleX = (int)(Math.Floor(pointToSampleFrom.X - 0.5f));
+                    int sampleY = (int)(Math.Floor(pointToSampleFrom.Y - 0.5f));
                     // Do these need rounding?
                     int targetY = y_;// - (int)(height) + (int)(rotatedHeight);
                     int targetX = x_;// - (int)(width) + (int)(rotatedWidth);
 
-                    char sampledChar;
+                    OutputPixel sampledChar;
 
                     /*
                     if (
@@ -285,6 +299,7 @@ namespace ASCIIMusicVisualiser8.Effects
 
                     finalGrid[targetY][targetX] = sampledChar;
 
+
                     //finalGrid[y][x] = '';
                 }
             }
@@ -300,9 +315,9 @@ namespace ASCIIMusicVisualiser8.Effects
         }
 
 
-        List<List<char>> ApplyScale(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)
+        List<List<OutputPixel>> ApplyScale(List<List<OutputPixel>> input, double beat, OutputPixel transparentChar, Vector2 drawPoint, out OutputPixel newTransparentChar, out Vector2 newDrawPoint)
         {
-            List<List<char>> finalGrid = new List<List<char>>();
+            List<List<OutputPixel>> finalGrid = new List<List<OutputPixel>>();
 
             // Unused for now
             //int xScaleCenter = (int)Math.Round(xScaleInterpolation.GetTime(beat));
@@ -322,13 +337,13 @@ namespace ASCIIMusicVisualiser8.Effects
             // Populate finalGrid with nearest neighbour interpolation
             for (int i = 0; i < scaledHeight; i++)
             {
-                List<char> currentRow = new List<char>();
+                List<OutputPixel> currentRow = new List<OutputPixel>();
                 for (int j = 0; j < scaledWidth; j++)
                 {
                     int xUnscaled = (int)Math.Round(j * scaleFactor);
                     int yUnscaled = (int)Math.Round(i * scaleFactor);
 
-                    char charToAdd;
+                    OutputPixel charToAdd;
 
 
                     if (yUnscaled < originalHeight && xUnscaled < originalWidth)
@@ -376,7 +391,11 @@ namespace ASCIIMusicVisualiser8.Effects
         {
             return $"xyPos <{xPosInterpolation.GetTime(time).ToString("0.00")},{yPosInterpolation.GetTime(time).ToString("0.00")}> " +
                 $"-rI {rotationInterpolation.GetTime(time).ToString("0.00")} " +
-                $"-sI {scaleInterpolation.GetTime(time).ToString("0.00")}";
+                $"-sI {scaleInterpolation.GetTime(time).ToString("0.00")} " +
+                $"scaleTime: {scaleTime}t\t|" +
+                $"posTime: {posTime}t\t|" +
+                $"rotTime: {rotTime}t\t|" +
+                $"totalTime: {lastExecutedTime}t\t|";
         }
 
     }

@@ -19,6 +19,11 @@ namespace ASCIIMusicVisualiser8
         Vector2 size;
 
 
+        public ShaderTest(string parameterString)
+        {
+            ProcessParameterStringPlugin(parameterString);
+        }
+
         /*
         public override List<PluginParameter> PluginParameters
         {
@@ -90,10 +95,10 @@ namespace ASCIIMusicVisualiser8
         }
 
 
-        public override List<List<char>> Generate(double beat, out char transparentChar)
+        public override List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar)
         {
             //size = new Vector2(60, 5);
-            var finalArray = Create2DArray(' ', size);
+            var finalArray = Create2DArray(new OutputPixel(0), size);
 
             for (int i = 0; i < size.Y; i++)
             {
@@ -114,11 +119,11 @@ namespace ASCIIMusicVisualiser8
 
                     opacity = mainImage(new((float)_i, (float)_j), beat/2f);
 
-                    finalArray[i][j] = GetCharFromDensity(opacity);
+                    finalArray[i][j] = new((float)opacity);
                 }
             }
 
-            transparentChar = ' ';
+            transparentChar = new(0);
             return finalArray;
         }
         public override string ShowParameterValues(double time)

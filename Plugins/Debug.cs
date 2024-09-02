@@ -16,23 +16,23 @@ namespace ASCIIMusicVisualiser8
 
         public override void Init() { }
 
-        public override List<List<char>> Generate(double beat, out char transparentChar)
+        public override List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar)
         {
 
-            List<List<char>> finalArray = new();
+            List<List<OutputPixel>> finalArray = new();
 
             int xAmount = 32;
             int yAmount = 32;
 
             for (int offset = 0; offset < xAmount; offset++)
             {
-                List<char> currentList = new List<char>();
+                List<OutputPixel> currentList = new List<OutputPixel>();
                 for (int i = 0; i < yAmount; i++)
                 {
                     // 65 is A ascii
                     char currentChar = (char)(65 + (i + offset) % 26);
                     //char currentChar = ' ';
-                    currentList.Add(currentChar);
+                    currentList.Add(new(currentChar));
                 }
                 finalArray.Add(currentList);
             }
@@ -41,13 +41,13 @@ namespace ASCIIMusicVisualiser8
              * YOUR CODE HERE
              */
 
-            transparentChar = new char();
+            transparentChar = new OutputPixel(0);
             return finalArray;
         }
 
         public override string ShowParameterValues(double time)
         {
-            return "...";
+            return "";
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ASCIIMusicVisualiser8.Types.Interpolation.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -38,16 +39,21 @@ namespace ASCIIMusicVisualiser8.Effects
         {
 
             if (GetPluginParameter("char").givenUserParameter == "[]")
-                forcedTransparentChar = ' ';
+                forcedTransparentChar = '\0';
             else
                 forcedTransparentChar = GetPluginParameter("char").givenUserParameter[0];
             name = $"Forced Alpha";
         }
 
-        public override List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)
+        public override List<List<OutputPixel>> ApplyTo(List<List<OutputPixel>> input, double beat, OutputPixel transparentChar, Vector2 drawPoint, out OutputPixel newTransparentChar, out Vector2 newDrawPoint)
         {
-            newTransparentChar = forcedTransparentChar;
+            var watch = Stopwatch.StartNew();
+
+            newTransparentChar = new('\0');
             newDrawPoint = drawPoint;
+
+            watch.Stop();
+            lastExecutedTime = watch.ElapsedTicks;
             return input;
         }
     }

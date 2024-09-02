@@ -14,6 +14,7 @@ namespace ASCIIMusicVisualiser8.Effects
     {
         public string name {get; set;}
 
+        public float lastExecutedTime;
         public Effect()
         {
         }
@@ -35,12 +36,12 @@ namespace ASCIIMusicVisualiser8.Effects
         // Can this be linked to an inherited class?
 
         public abstract void Init();
-        public abstract List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint);
+        public abstract List<List<OutputPixel>> ApplyTo(List<List<OutputPixel>> input, double beat, OutputPixel transparentChar, Vector2 drawPoint, out OutputPixel newTransparentChar, out Vector2 newDrawPoint);
 
         public void HandleNext(string indent, bool last, double time, bool isActive)
         {
 
-            string newName = $"{name} [{ShowParameterValues(time)}]";
+            string newName = $"{name} [{ShowParameterValues(time)}] {lastExecutedTime}t";
             ConsoleColor color;
 
             color = isActive ? ConsoleColor.Cyan : ConsoleColor.DarkGray;

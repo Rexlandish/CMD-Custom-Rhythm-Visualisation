@@ -62,22 +62,22 @@ namespace ASCIIMusicVisualiser8
             
         }
 
-        public override List<List<char>> Generate(double beat, out char transparentChar)
+        public override List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar)
         {
-            char fillChar = Utility.Conversion.GetCharFromDensity(brightness.GetTime(beat));
-            List<List<char>> finalArray = Utility.Creation.Create2DArray(fillChar, size);
+            char fillChar = Utility.Conversion.GetCharFromBrightness(brightness.GetTime(beat));
+            List<List<OutputPixel>> finalArray = Utility.Creation.Create2DArray(new OutputPixel(fillChar), size);
 
             /*
              * YOUR CODE HERE
              */
 
-            transparentChar = ' ';
+            transparentChar = new OutputPixel(' ');
             return finalArray;
         }
 
         public override string ShowParameterValues(double time)
         {
-            return $"-b {brightness.GetTime(time).ToString("0.00")}";
+            return $"-s <{size.X.ToString("0.0")},{size.Y.ToString("0.0")}> -b {brightness.GetTime(time).ToString("0.00")}";
         }
     }
 }

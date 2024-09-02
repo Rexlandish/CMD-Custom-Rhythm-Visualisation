@@ -2,13 +2,12 @@
 using ASCIIMusicVisualiser8.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
-using System.Threading;
-using System.Xml.Linq;
 using static ASCIIMusicVisualiser8.Generator;
-using static ASCIIMusicVisualiser8.Utility.Visualisation;
 using static ASCIIMusicVisualiser8.Utility.Conversion;
 using static ASCIIMusicVisualiser8.Utility.Creation;
+using static ASCIIMusicVisualiser8.Utility.Visualisation;
 
 namespace ASCIIMusicVisualiser8
 {
@@ -23,7 +22,7 @@ namespace ASCIIMusicVisualiser8
 
         bool isActivated = true;
 
-
+        public float lastExecutionTime;
 
         public Display(Vector2 dimensions)
         { 
@@ -31,7 +30,7 @@ namespace ASCIIMusicVisualiser8
         }
 
         // All plugins active
-        List<Generator> activeGenerators = new()
+        public List<Generator> activeGenerators = new()
         {
 
         };
@@ -66,15 +65,22 @@ namespace ASCIIMusicVisualiser8
 
         public string GetFrameOnBeat(double beat)
         {
+            OutputPixel op = new(0);
+            var currentFrameDisplayBoard = Create2DArray(op, dimensions);
 
-            var currentFrameDisplayBoard = Create2DArray(' ', dimensions);
+            Stopwatch sw = new Stopwatch();
+            lastExecutionTime = 0;
 
             foreach (var generator in activeGenerators)
             {
+                sw.Start();
                 DrawLayer(currentFrameDisplayBoard, generator, beat);
+                sw.Stop();
+                lastExecutionTime += sw.ElapsedMilliseconds;
+                sw.Reset();
             }
 
-            string charlistToString = StringifyCharlist(currentFrameDisplayBoard);
+            string charlistToString = StringifyOutputPixel2DArray(currentFrameDisplayBoard);
             
             return charlistToString;
         }
@@ -85,10 +91,12 @@ namespace ASCIIMusicVisualiser8
             isActivated = false;
         }
 
-        public static void DrawLayer(List<List<char>> displayBoard, Generator generator, double currentBeat)
+        public static void DrawLayer(List<List<OutputPixel>> displayBoard, Generator generator, double currentBeat)
         {
             
+
             GeneratorOutput gOutput = generator.GetOutput(currentBeat);
+            
 
             /*
             // Drawing a layer with effects
@@ -109,18 +117,18 @@ namespace ASCIIMusicVisualiser8
             {
             }
             */
-            DrawLayer(displayBoard, gOutput.position, gOutput.text, generator.blendingMode, gOutput.transparentChar);
+            DrawLayer(displayBoard, gOutput.position, gOutput.outputPixels, gOutput.blendingMode, gOutput.transparentChar);
 
         }
 
-        static void DrawLayer(List<List<char>> _displayBoard, Vector2 topLeftPosition, List<List<char>> textToDraw, BlendingMode blendingMode, char? transparentChar = null)
+        public static void DrawLayer(List<List<OutputPixel>> _displayBoard, Vector2 topLeftPosition, List<List<OutputPixel>> textToDraw, BlendingMode blendingMode, OutputPixel? transparentPixel = null)
         {
 
             int height = _displayBoard[0].Count;
             int width = _displayBoard.Count;
 
 
-            // Iterate through each char in textToDraw and change it's corresponding 
+            // Iterate through each outputPixel in textToDraw and change it's corresponding 
             for (int i = 0; i < textToDraw.Count; i++)
             {
                 for (int j = 0; j < textToDraw[0].Count; j++)
@@ -131,56 +139,54 @@ namespace ASCIIMusicVisualiser8
                     if (positionToDraw.X < width && positionToDraw.Y < height && positionToDraw.X >= 0 && positionToDraw.Y >= 0)
                     {
                         // If the current character is not transparent, draw it onto the displayBoard
-                        char charToDraw = textToDraw[i][j];
+                        OutputPixel charToDraw = textToDraw[i][j];
 
-                        char originalChar;
+                        OutputPixel originalChar;
+                        
+                        // Get the current pixel to combine it with the pixel to draw
                         if (i < width && j < height && i >= 0 && j >= 0)
                         {
                             originalChar = _displayBoard[i][j];
                         }
                         else
                         {
-                            originalChar = ' ';
+                            originalChar = new OutputPixel(0);
                         }
                         
-                        char finalChar = CombineChars(originalChar, charToDraw, blendingMode);
+                        OutputPixel finalChar = CombineChars(originalChar, charToDraw, blendingMode);
 
-                        if (charToDraw != transparentChar) _displayBoard[(int)positionToDraw.X][(int)positionToDraw.Y] = finalChar;
+                        if (!charToDraw.IsTransparent(transparentPixel)) _displayBoard[(int)positionToDraw.X][(int)positionToDraw.Y] = finalChar;
 
                     }
                 }
             }
         }
 
-        public static char CombineChars(char originalChar, char charToDraw, BlendingMode blendingMode)
+        public static OutputPixel CombineChars(OutputPixel originalPixel, OutputPixel pixelToDraw, BlendingMode blendingMode)
         {
-            double originalValue = GetDensityFromChar(originalChar);
-            double valueToDraw = GetDensityFromChar(charToDraw);
-
-
             switch (blendingMode)
             {
                 case BlendingMode.InFront:
-                    return charToDraw;
+                    return new(pixelToDraw);
 
                 case BlendingMode.Behind:
-                    if (originalValue == 0)
+                    if (originalPixel.brightness == 0)
                     {
-                        return charToDraw;
+                        return new(pixelToDraw.brightness);
                     }
-                    return originalChar;
+                    return new(originalPixel.brightness);
 
                 case BlendingMode.Multiply:
-                    return GetCharFromDensity(originalValue * valueToDraw);
+                    return new(originalPixel.brightness * pixelToDraw.brightness);
 
                 case BlendingMode.Addition:
-                    return GetCharFromDensity(originalValue + valueToDraw);
+                    return new(originalPixel.brightness + pixelToDraw.brightness);
 
                 case BlendingMode.Subtract:
-                    return GetCharFromDensity(originalValue - valueToDraw);
+                    return new(originalPixel.brightness - pixelToDraw.brightness);
 
                 case BlendingMode.Without:
-                    return GetCharFromDensity(valueToDraw - originalValue);
+                    return new(pixelToDraw.brightness - originalPixel.brightness);
 
                 default:
                     throw new Exception("No blending mode provided!");
@@ -194,8 +200,8 @@ namespace ASCIIMusicVisualiser8
 
         public void HandleNext(string indent, bool last, double time, bool isActive)
         {
-
-            PrintHierarchy(name, indent, last, true, false, isActive, out string newIndent);
+            string newName = $"{name} {lastExecutionTime}ms";
+            PrintHierarchy(newName, indent, last, true, false, isActive, out string newIndent);
 
             for (int i = 0; i < activeGenerators.Count; i++)
                 activeGenerators[i].HandleNext(newIndent, i == activeGenerators.Count - 1, time, isActive);

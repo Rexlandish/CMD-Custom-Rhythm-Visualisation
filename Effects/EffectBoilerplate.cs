@@ -1,6 +1,7 @@
 ﻿using ASCIIMusicVisualiser8.Types.Interpolation.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -51,11 +52,13 @@ namespace ASCIIMusicVisualiser8.Effects
             */
         }
 
-        public override List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)
+        public override List<List<OutputPixel>> ApplyTo(List<List<OutputPixel>> input, double beat, OutputPixel transparentChar, Vector2 drawPoint, out OutputPixel newTransparentChar, out Vector2 newDrawPoint)
         {
+            var watch = Stopwatch.StartNew();
+
             newTransparentChar = transparentChar;
 
-            List<List<char>> finalGrid = new List<List<char>>();
+            List<List<OutputPixel>> finalGrid = new List<List<OutputPixel>>();
             /*
 
             // Unused for now
@@ -100,6 +103,9 @@ namespace ASCIIMusicVisualiser8.Effects
             */
             newTransparentChar = transparentChar;
             newDrawPoint = drawPoint;
+
+            watch.Stop();
+            lastExecutedTime = watch.ElapsedTicks;
 
             return finalGrid;
         }

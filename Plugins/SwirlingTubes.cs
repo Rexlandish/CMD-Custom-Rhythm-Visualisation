@@ -20,6 +20,13 @@ namespace ASCIIMusicVisualiser8
         }
         */
 
+        public SwirlingTubes() { }
+        public SwirlingTubes(string parameterString)
+        {
+            ProcessParameterStringPlugin(parameterString);
+        }
+
+
         public override void InitializeParameters()
         {
             pluginParameters =
@@ -44,10 +51,11 @@ namespace ASCIIMusicVisualiser8
             return (Math.Sin(value) + 1)/2;
         }
 
-        public override List<List<char>> Generate(double beat, out char transparentChar)
+        public override List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar)
         {
             //size = new Vector2(60, 5);
-            var finalArray = Create2DArray(' ', size);
+            var finalArray = Create2DArray(new OutputPixel(0), size);
+            
 
             double opacity;
 
@@ -79,16 +87,16 @@ namespace ASCIIMusicVisualiser8
                         Math.Sin((_j / tubeSpacing)  - asidenessSin) * (asidenessCos * 0.2);
 
 
-                    finalArray[i][j] = GetCharFromDensity(currentDensity);
+                    finalArray[i][j] = new((float)currentDensity);
                 }
             }
 
-            transparentChar = ' ';
+            transparentChar = new(' ');
             return finalArray;
         }
         public override string ShowParameterValues(double time)
         {
-            return "...";
+            return "";
         }
 
     }

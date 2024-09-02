@@ -12,14 +12,14 @@ namespace ASCIIMusicVisualiser8.Plugins
         InterpolationGraph sizeInterpolation;
         char character;
 
-        public override List<List<char>> Generate(double beat, out char transparentChar)
+        public override List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar)
         {
             double size = Math.Round(sizeInterpolation.GetTime(beat) * 40 + 5);
             size = size < 0 ? 0 : size;
             /*
             List<char> numberString = new List<char>(size.ToString().ToCharArray());
 
-            List<List<char>> finalArray = new List<List<char>>
+            List<List<OutputPixel>> finalArray = new List<List<OutputPixel>>
             {
                 numberString,
                 numberString,
@@ -28,10 +28,10 @@ namespace ASCIIMusicVisualiser8.Plugins
             };
             */
             
-            List<List<char>> finalArray = Create2DArray(character, new((int)size, (int)size));
-            
+            List<List<OutputPixel>> finalArray = Create2DArray(new OutputPixel(character), new((int)size, (int)size));
 
-            transparentChar = ' ';
+
+            transparentChar = new(' ');
             return finalArray;
         }
 

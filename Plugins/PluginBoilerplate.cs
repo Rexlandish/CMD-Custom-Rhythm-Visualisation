@@ -22,6 +22,11 @@ namespace ASCIIMusicVisualiser8
         }
         */
 
+        public PluginBoilerplate(string parameterString)
+        {
+            ProcessParameterStringPlugin(parameterString);
+        }
+
         public override void InitializeParameters()
         {
             pluginParameters =
@@ -50,16 +55,16 @@ namespace ASCIIMusicVisualiser8
         }
 
 
-        public override List<List<char>> Generate(double beat, out char transparentChar)
+        public override List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar)
         {
 
-            List<List<char>> finalArray = new();
+            List<List<OutputPixel>> finalArray = new();
 
             /*
              * YOUR CODE HERE
              */
 
-            transparentChar = ' ';
+            transparentChar = new(0);
             return finalArray;
         }
 

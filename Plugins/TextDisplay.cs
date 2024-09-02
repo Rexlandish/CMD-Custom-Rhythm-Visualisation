@@ -26,7 +26,13 @@ namespace ASCIIMusicVisualiser8.Plugins
         char delimiter;
         int phraseFrameCount;
 
-        public override List<List<char>> Generate(double beat, out char transparentChar)
+        public TextDisplay() { }
+        public TextDisplay(string parameterString)
+        {
+            ProcessParameterStringPlugin(parameterString);
+        }
+
+        public override List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar)
         {
             // Get current interpolation from beat
             int index = (int)Math.Floor(positionInterpolation.GetTime(beat));
@@ -45,7 +51,7 @@ namespace ASCIIMusicVisualiser8.Plugins
             }
 
             // Render all text for now
-            List<List<char>> wordsToRender = new();
+            List<List<OutputPixel>> wordsToRender = new();
             List<string> phrase = phraseFrames[index];
 
             // This function gets the longest item in the list and returns it's length
@@ -56,14 +62,18 @@ namespace ASCIIMusicVisualiser8.Plugins
                 int paddingAmount = longestPhraseLength - word.Length;
 
                 List<char> wordToCharList = new(word.ToArray());
+                List<OutputPixel> wordToOutputPixel = new();
                 wordToCharList.AddRange(RepeatNTimesToList(' ', paddingAmount));
-                wordsToRender.Add(wordToCharList);
+                
+                wordToCharList.ForEach(c => wordToOutputPixel.Add(new OutputPixel(c)));
+
+                wordsToRender.Add(wordToOutputPixel);
             }
 
             // Debug, show index of current phrase
             //wordsToRender.Add(new (index.ToString().ToCharArray()));
             //transparentChar = new char();
-            transparentChar = ' ';
+            transparentChar = new(0);
             //transparentChar = '*';
 
             return wordsToRender;

@@ -58,10 +58,10 @@ namespace ASCIIMusicVisualiser8
         }
 
 
-        public override List<List<char>> Generate(double beat, out char transparentChar)
+        public override List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar)
         {
             //size = new Vector2(60, 5);
-            var finalArray = Create2DArray(' ', size);
+            var finalArray = Create2DArray(new OutputPixel(0), size);
 
 
 
@@ -75,11 +75,11 @@ namespace ASCIIMusicVisualiser8
                 {
                     //double opacity = randomBetween >= thresholdInterpolation.GetTime(beat) ? 1 * NextUInt() : 0;//1 * NextUInt() : 0;
                     double opacity = thresholdInterpolation.GetTime(beat) * NextUInt();//1 * NextUInt() : 0;
-                    finalArray[i][j] = GetCharFromDensity(opacity);
+                    finalArray[i][j] = new((float)opacity);
                 }
             }
 
-            transparentChar = ' ';
+            transparentChar = new(0);
             //transparentChar = new();
             return finalArray;
         }

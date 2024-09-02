@@ -1,6 +1,7 @@
 ﻿using ASCIIMusicVisualiser8.Types.Interpolation.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
@@ -46,9 +47,11 @@ namespace ASCIIMusicVisualiser8.Effects
             return $"<{xOffsetInterpolation.GetTime(time).ToString("0.00")}, {yOffsetInterpolation.GetTime(time).ToString("0.00")}>";
         }
 
-        public override List<List<char>> ApplyTo(List<List<char>> input, double beat, char transparentChar, Vector2 drawPoint, out char newTransparentChar, out Vector2 newDrawPoint)
+        public override List<List<OutputPixel>> ApplyTo(List<List<OutputPixel>> input, double beat, OutputPixel transparentChar, Vector2 drawPoint, out OutputPixel newTransparentChar, out Vector2 newDrawPoint)
         {
-            List<List<char>> xLoopedGrid = new List<List<char>>();
+            var watch = Stopwatch.StartNew();
+
+            List<List<OutputPixel>> xLoopedGrid = new List<List<OutputPixel>>();
 
             // Get each row and loop it around
             // mod the loop amount
@@ -66,7 +69,7 @@ namespace ASCIIMusicVisualiser8.Effects
             
 
             
-            List<List<char>> yLoopedGrid;
+            List<List<OutputPixel>> yLoopedGrid;
             // Rotate the list vertically
             double yDouble = yOffsetInterpolation.GetTime(beat);
             int y = (int)Math.Floor(Repeat(yDouble, input[0].Count));
@@ -79,6 +82,9 @@ namespace ASCIIMusicVisualiser8.Effects
 
             newTransparentChar = transparentChar;
             newDrawPoint = drawPoint;
+
+            watch.Stop();
+            lastExecutedTime = watch.ElapsedTicks;
 
             return yLoopedGrid;
         }

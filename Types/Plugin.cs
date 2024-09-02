@@ -33,7 +33,7 @@ namespace ASCIIMusicVisualiser8
     public interface IPlugin
     {
         //List<PluginParameter> PluginParameters { get; }
-        abstract List<List<char>> Generate(double beat, out char transparentChar);
+        abstract List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentPixel);
         string pluginName { get; } // Name of the plugin
         Plugin @class { get; } // Reference to the class the interface is on
         void InitializeParameters(); // Converts string input to data
@@ -61,7 +61,7 @@ namespace ASCIIMusicVisualiser8
         }
 
 
-        public abstract List<List<char>> Generate(double beat, out char transparentChar);
+        public abstract List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar);
         
 
         // Parse string input into parameter types

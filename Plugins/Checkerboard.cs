@@ -33,6 +33,14 @@ namespace ASCIIMusicVisualiser8
         }
         */
 
+        public Checkerboard(){}
+
+        public Checkerboard(string parameterString)
+        {
+            ProcessParameterStringPlugin(parameterString);
+        }
+
+
         public override void InitializeParameters()
         {
             pluginParameters =
@@ -75,10 +83,10 @@ namespace ASCIIMusicVisualiser8
             return (Math.Sin(value) + 1)/2;
         }
 
-        public override List<List<char>> Generate(double beat, out char transparentChar)
+        public override List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar)
         {
             //size = new Vector2(60, 5);
-            var finalArray = Create2DArray(' ', size);
+            var finalArray = Create2DArray(new OutputPixel(0), size);
 
             double scrollspeedX = xSpeed;
             double scrollspeedY = ySpeed;
@@ -96,21 +104,22 @@ namespace ASCIIMusicVisualiser8
 
 
                     double opacity =
-                        Math.Sin((_i + (beat * scrollspeedX)) / 1) *
-                        Math.Sin((_j + (beat * scrollspeedY)) / 1)
+                        Math.Sin((_i + (beat * scrollspeedX)) / 8) *
+                        Math.Sin((_j + (beat * scrollspeedY)) / 8)
                     ;
 
-                    opacity -= 0.1;
+                    opacity /= 2 ;
+                    opacity += 0.25;
                     //Math.Pow(opacity, 2);
                     //opacity = Saturate(opacity, 0);
 
                     
 
-                    finalArray[i][j] = GetCharFromDensity(opacity);
+                    finalArray[i][j] = new((float)opacity);
                 }
             }
 
-            transparentChar = ' ';
+            transparentChar = new(' ');
             return finalArray;
         }
 

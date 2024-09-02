@@ -31,6 +31,8 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
                     return EaseInOutSin(t);
                 case "cos":
                     return Cos(t, curveVariables);
+                case "sin":
+                    return Sin(t, curveVariables);
                 case "bounce":
                     return Bounce(t, curveVariables);
                 default:
@@ -38,7 +40,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             }
         }
 
-        static double Cos(double t, double[] curveVariables)
+        public static double Cos(double t, double[] curveVariables)
         {
             if (curveVariables.Length == 0)
             {
@@ -48,13 +50,23 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             double curveCount = curveVariables[0];
             return (Math.Cos(curveCount * Math.PI * t) + 1) / 2;
         }
+        public static double Sin(double t, double[] curveVariables)
+        {
+            if (curveVariables.Length == 0)
+            {
+                throw new Exception("No curve variables provided!");
+            }
 
-        static double Linear(double t)
+            double curveCount = curveVariables[0];
+            return (Math.Sin(curveCount * Math.PI * t) + 1) / 2;
+        }
+
+        public static double Linear(double t)
         {
             return t;
         }
 
-        static double EaseIn(double t, double[] curveVariables)
+        public static double EaseIn(double t, double[] curveVariables)
         {
             if (curveVariables.Length == 0)
             {
@@ -65,7 +77,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             return Math.Pow(t, power);
         }
 
-        static double EaseOut(double t, double[] curveVariables)
+        public static double EaseOut(double t, double[] curveVariables)
         {
             if (curveVariables.Length == 0)
             {
@@ -75,7 +87,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             return 1 - Math.Pow(1 - t, power);
         }
 
-        static double EaseOutElastic(double t, double[] curveVariables)
+        public static double EaseOutElastic(double t, double[] curveVariables)
         {
             double c4 = (2 * Math.PI) / 3;
 
@@ -86,7 +98,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
               : Math.Pow(2, -10 * t) * Math.Sin((t * 10 - 0.75) * c4) + 1;
         }
 
-        static double EaseInOutElastic(double t, double[] curveVariables)
+        public static double EaseInOutElastic(double t, double[] curveVariables)
         {
             double c5 = (2 * Math.PI) / 4.5;
 
@@ -99,14 +111,14 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
               : (Math.Pow(2, -20 * t + 10) * Math.Sin((20 * t - 11.125) * c5)) / 2 + 1;
         }
 
-        static double EaseInOutSin(double t)
+        public static double EaseInOutSin(double t)
         {
             return -(Math.Cos(Math.PI * t) - 1) / 2;
         }
 
-        static double Bounce(double t, double[] curveVariables)
+        public static double Bounce(double t, double[] curveVariables)
         {
-            return 2 * Math.Abs(Cos(t, curveVariables) - 0.5);
+            return 2 * Math.Abs(Sin(t, curveVariables) - 0.5);
         }
     }
 }

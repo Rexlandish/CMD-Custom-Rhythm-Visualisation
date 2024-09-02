@@ -3,29 +3,37 @@ using ASCIIMusicVisualiser8.Types;
 using ASCIIMusicVisualiser8.Types.Interpolation.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
-using static ASCIIMusicVisualiser8.Utility;
 using static ASCIIMusicVisualiser8.Utility.Visualisation;
+using System.Threading.Tasks;
+using NAudio.SoundFont;
+using static ASCIIMusicVisualiser8.Generator;
 
 namespace ASCIIMusicVisualiser8
 {
 
     public class GeneratorOutput
     {
-        public List<List<char>> text;
-        public char? transparentChar;
+        public List<List<OutputPixel>> outputPixels;
+        public OutputPixel? transparentChar;
         public Vector2 position;
+        public BlendingMode blendingMode;
+        public bool isShader;
 
-        public GeneratorOutput(List<List<char>> text, Vector2 position, char? transparentChar = null)
+        public GeneratorOutput(List<List<OutputPixel>> outputPixels, Vector2 position, BlendingMode blendingMode, OutputPixel? transparentChar = null)
         {
-            this.text = text;
+            this.outputPixels = outputPixels;
+            isShader = false;
             this.transparentChar = transparentChar;
             this.position = position;
+            this.blendingMode = blendingMode;
         }
+
 
         public override string ToString()
         {
-            return text.ToString();
+            return outputPixels.ToString();
         }
     }
 
@@ -44,6 +52,11 @@ namespace ASCIIMusicVisualiser8
         
         public BlendingMode blendingMode;
 
+        public float totalExecutionTime;
+        public float generationTime;
+        public float effectTime;
+        public float subgenerationTime;
+
         public enum BlendingMode
         {
             InFront, // Default
@@ -52,6 +65,11 @@ namespace ASCIIMusicVisualiser8
             Addition,
             Subtract,
             Without
+        }
+
+        public Generator Clone()
+        {
+            return (Generator)this.MemberwiseClone();
         }
 
 
@@ -77,47 +95,94 @@ namespace ASCIIMusicVisualiser8
 
         public GeneratorOutput GetOutput(double currentBeat)
         {
+
             // if the isActive interpolation graph is larger than 0.5, render the effect output.
             // Otherwise, return nothing.
 
+            Stopwatch sw = Stopwatch.StartNew();
+
             if (activeInterpolationGraph.GetTime(currentBeat) >= 0.5)
             {
-                List<List<char>> effectOutput = plugin.Generate(currentBeat, out char transparentChar);
+                // Generate main plugin
+                Stopwatch genSw = Stopwatch.StartNew();
+                List<List<OutputPixel>> effectOutput = plugin.Generate(currentBeat, out OutputPixel transparentPixel);
+                genSw.Stop();
+                generationTime = genSw.ElapsedTicks;
 
                 // Combine with the subgenerators
-                
-                for (int i = 0; i < subgenerators.Count; i++)
+                Stopwatch subGenSw = Stopwatch.StartNew();
+
+                foreach (var subgen in subgenerators)
                 {
-                    Display.DrawLayer(effectOutput, subgenerators[i], currentBeat);
+                    Display.DrawLayer(effectOutput, subgen, currentBeat);
                 }
+
+                /*
+                List<GeneratorOutput> gOuts = new List<GeneratorOutput>();
+                Parallel.ForEach(subgenerators, subgen =>
+                {
+                    var out_ = subgen.GetOutput(currentBeat);
+                    
+                    lock(gOuts)
+                    {
+                        gOuts.Add(out_);
+                    }
+                });
                 
+                foreach (var gOutput in gOuts)
+                {
+                    //Display.DrawLayer(effectOutput, subgen, currentBeat);
+                    Display.DrawLayer(effectOutput, gOutput.position, gOutput.text, gOutput.blendingMode, gOutput.transparentChar);
+                }
+                */
+                subGenSw.Stop();
+                subgenerationTime = subGenSw.ElapsedTicks;
 
-                char newTransparentChar = transparentChar;
 
+
+                Stopwatch effectSw = Stopwatch.StartNew();
+
+                OutputPixel newTransparentChar = transparentPixel;
                 Vector2 drawPoint = Vector2.Zero;
 
-
+                // Combine with the effects
                 foreach (Effect effect in effects)
                 {
                     // Update the transparentChar and drawPoint each time
-                    effectOutput = effect.ApplyTo(effectOutput, currentBeat, transparentChar, drawPoint, out newTransparentChar, out Vector2 newDrawPoint);
+                    effectOutput = effect.ApplyTo(effectOutput, currentBeat, transparentPixel, drawPoint, out newTransparentChar, out Vector2 newDrawPoint);
                     
                     drawPoint = newDrawPoint;
-                    transparentChar = newTransparentChar;
+                    transparentPixel = newTransparentChar;
                 }
 
+                effectSw.Stop();
+                effectTime = effectSw.ElapsedTicks;
+
+                sw.Stop();
+                totalExecutionTime = sw.ElapsedTicks;
+                
                 return new GeneratorOutput(
                     effectOutput,
                     drawPoint, //! ------------------------ WHEN EFFECTS ARE ADDED, PUT THE EFFECT OUTPUT THROUGH THEM IN THIS FUNCTION AND PUT THE OUTPUT HERE
+                    blendingMode,
                     newTransparentChar
                 );
 
             }
             else
             {
+
+                sw.Stop();
+                totalExecutionTime = sw.ElapsedTicks;
+
+                generationTime = 0;
+                subgenerationTime = 0;
+                effectTime = 0;
+
                 return new GeneratorOutput(
                     new(),
-                    Vector2.Zero
+                    Vector2.Zero,
+                    BlendingMode.InFront
                 );
             }
 
@@ -162,8 +227,12 @@ namespace ASCIIMusicVisualiser8
 
             bool hasChildren = subgenerators.Count > 0 | effects.Count > 0;
 
+            string blendChar = blendingMode == BlendingMode.InFront ? "" : blendSymbolDictionary[blendingMode].ToString();
+
             //{name}
-            string newName = $"{plugin.pluginName} ({name}) {blendSymbolDictionary[blendingMode]} [{plugin.@class.ShowParameterValues(time)}]";
+            string parameterValues = $"{plugin.@class.ShowParameterValues(time)}";
+
+            string newName = $"{plugin.pluginName} (\"{name}\") {blendChar} {parameterValues ?? ""} [ Main: {generationTime}t \t| Effect: {effectTime}t \t| Subgen: {subgenerationTime}t \t| --Total: {totalExecutionTime}t-- ]";
 
             // Show this generator as active only if it's parent is active too
             bool isGeneratorActive = activeInterpolationGraph.GetTime(time) >= 0.5 && isParentActive;
