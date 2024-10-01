@@ -12,6 +12,12 @@ namespace ASCIIMusicVisualiser8.Plugins
         InterpolationGraph sizeInterpolation;
         char character;
 
+        public Square() { }
+        public Square(string parameters)
+        {
+            ProcessParameterString(parameters);
+        }
+
         public override List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar)
         {
             double size = Math.Round(sizeInterpolation.GetTime(beat) * 40 + 5);

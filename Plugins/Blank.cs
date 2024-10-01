@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using static ASCIIMusicVisualiser8.Utility.Creation;
 
-namespace ASCIIMusicVisualiser8
+namespace ASCIIMusicVisualiser8.Plugins
 {
     public class Blank : Plugin, IPlugin
     {

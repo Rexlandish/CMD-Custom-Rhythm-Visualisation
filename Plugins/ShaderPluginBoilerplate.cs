@@ -4,7 +4,7 @@ using System.Numerics;
 using static ASCIIMusicVisualiser8.Utility.Creation;
 using static ASCIIMusicVisualiser8.Utility.Conversion;
 
-namespace ASCIIMusicVisualiser8
+namespace ASCIIMusicVisualiser8.Plugins
 {
     public class ShaderPluginBoilerplate : Plugin, IPlugin
     {
@@ -20,6 +20,8 @@ namespace ASCIIMusicVisualiser8
 
         }
         */
+
+        public ShaderPluginBoilerplate() { }
         public ShaderPluginBoilerplate(string parameterString)
         {
             ProcessParameterStringPlugin(parameterString);

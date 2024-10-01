@@ -1,9 +1,12 @@
 ﻿
+using ASCIIMusicVisualiser8.Effects;
 using ASCIIMusicVisualiser8.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using static ASCIIMusicVisualiser8.Generator;
 using static ASCIIMusicVisualiser8.Utility.Conversion;
 using static ASCIIMusicVisualiser8.Utility.Creation;
@@ -206,5 +209,67 @@ namespace ASCIIMusicVisualiser8
             for (int i = 0; i < activeGenerators.Count; i++)
                 activeGenerators[i].HandleNext(newIndent, i == activeGenerators.Count - 1, time, isActive);
         }
+
+        public static void GetAllPlugins()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Type[] allClasses = assembly.GetTypes();//.Where(t => String.Equals(t.Namespace, "ASCIIMusicVisualiser8", StringComparison.Ordinal)).ToArray();
+
+            // Show plugins
+            Console.WriteLine("Plugins---------------");
+            foreach (Type t in allClasses)
+            {
+                
+                bool isPlugin = t.IsSubclassOf(Type.GetType("ASCIIMusicVisualiser8.Plugin"));
+                if (isPlugin)
+                {
+                    // Write all the parameters of the plugin
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(t.Name);
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                    ParameterProcessor p = (ParameterProcessor)Activator.CreateInstance(t);
+
+                    // Initialize their parameters, and print their flags
+                    p.InitializeParameters();
+                    if (p.pluginParameters == null) continue;
+                    foreach (var parameter in p.pluginParameters)
+                        Console.WriteLine(string.Join(" ", parameter.parameterFlags));
+
+                    Console.WriteLine();
+
+                }
+
+            }
+            Console.WriteLine();
+
+            // Show effects
+            Console.WriteLine("Effects---------------");
+            foreach (Type t in allClasses)
+            {
+                bool isEffect = t.IsSubclassOf(Type.GetType("ASCIIMusicVisualiser8.Effect"));
+                if (isEffect)
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine(t.Name);
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                    ParameterProcessor p = (ParameterProcessor)Activator.CreateInstance(t);
+
+                    // Initialize their parameters, and print their flags
+                    p.InitializeParameters();
+                    if (p.pluginParameters == null)
+                    {
+                        Console.WriteLine();
+                        continue;
+                    }
+                    foreach (var parameter in p.pluginParameters)
+                        Console.WriteLine(string.Join(" ", parameter.parameterFlags));
+
+                    Console.WriteLine();
+                }
+            }
+        }
+
     }
 }

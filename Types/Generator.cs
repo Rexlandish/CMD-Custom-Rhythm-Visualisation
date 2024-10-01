@@ -80,7 +80,7 @@ namespace ASCIIMusicVisualiser8
             this.blendingMode = blendingMode;
             this.layer = layer;
             this.effects = effects ?? new List<Effect>();
-            this.activeInterpolationGraph = new InterpolationGraph(isActiveInterpolation);
+            this.activeInterpolationGraph = new InterpolationGraph(isActiveInterpolation ?? "0;1");
         }
 
         public Generator(string generatorName, IPlugin plugin, InterpolationGraph isActiveInterpolation, BlendingMode blendingMode = BlendingMode.InFront, int layer = 0, List<Effect> effects = null)

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using static ASCIIMusicVisualiser8.Utility.Visualisation;
 
-namespace ASCIIMusicVisualiser8.Effects
+namespace ASCIIMusicVisualiser8
 {
     public abstract class Effect : ParameterProcessor, IHierarchy
     {

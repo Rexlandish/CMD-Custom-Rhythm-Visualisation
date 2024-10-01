@@ -13,7 +13,7 @@ namespace ASCIIMusicVisualiser8
         // Create the parameters at runtime
         public virtual void InitializeParameters() { }
 
-        protected List<PluginParameter> pluginParameters = new();
+        public List<PluginParameter> pluginParameters { get; protected set;}
 
         protected PluginParameter GetPluginParameter(string parameterName)
         {

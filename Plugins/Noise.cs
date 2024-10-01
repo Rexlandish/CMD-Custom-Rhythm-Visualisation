@@ -5,7 +5,7 @@ using System.Numerics;
 using static ASCIIMusicVisualiser8.Utility.Creation;
 using static ASCIIMusicVisualiser8.Utility.Conversion;
 
-namespace ASCIIMusicVisualiser8
+namespace ASCIIMusicVisualiser8.Plugins
 {
 
     /// <summary>

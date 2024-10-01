@@ -20,26 +20,25 @@ namespace ASCIIMusicVisualiser8
 
         static void Main(string[] args)
         {
+            /*
+            Utility.Conversion.InitializeCharShadeStringDict();
+
+            Generator tubes = new("tubes", new SwirlingTubes("-s 50,50"));
+            //IPlugin tubes = new SwirlingTubes("-s 50,50");
+
+            //Console.WriteLine(tubes.Generate(0, out _)[0][0]);
+            Console.WriteLine(Utility.Conversion.StringifyOutputPixel2DArray(tubes.GetOutput(0).outputPixels));
+
+            return;
+            */
 
             Utility.Conversion.InitializeCharShadeStringDict();
 
-            Console.WriteLine(typeof(ForceAlpha).AssemblyQualifiedName);
-            Type t = Type.GetType("ASCIIMusicVisualiser8.Effects.ForceAlpha, ASCIIMusicVisualiser8");
-
-            Effect obj = (Effect)Activator.CreateInstance(t);
-            
-            Console.WriteLine(obj.ShowParameterValues(0));
-            //return;
 
             string example = """
             PLUGIN Checkerboard : -sY 4 -sX 4 -s 200,200
             FX ForceAlpha : -c 1
-
-
-
             """;
-
-            
 
 
 
@@ -74,7 +73,7 @@ namespace ASCIIMusicVisualiser8
 
 
             //Utility.Conversion.InitializeCharShadeStringDict();
-            Display display = ExampleDisplays.CreateMaskingDisplay();
+            //Display display = ExampleDisplays.CreateMaskingDisplay();
 
 
             /*
@@ -102,7 +101,7 @@ namespace ASCIIMusicVisualiser8
 
         static float bpm = 104;
         static int updateTimeMilliseconds = 10;
-        static string audioFilepath = @".\audio\Overwatch.mp3";
+        static string audioFilepath = @".\audio\happy.mp3";
         static Conductor Conductor;
         public static void Run(Display display)
         {

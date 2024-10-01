@@ -5,7 +5,7 @@ using static ASCIIMusicVisualiser8.Utility.Creation;
 using static ASCIIMusicVisualiser8.Utility.Conversion;
 using ASCIIMusicVisualiser8.Types.Interpolation.Types;
 
-namespace ASCIIMusicVisualiser8
+namespace ASCIIMusicVisualiser8.Plugins
 {
     public class Divider : Plugin, IPlugin
     {
@@ -25,6 +25,10 @@ namespace ASCIIMusicVisualiser8
         }
         */
 
+        public Divider()
+        {
+
+        }
 
         public Divider(string parameterString)
         {

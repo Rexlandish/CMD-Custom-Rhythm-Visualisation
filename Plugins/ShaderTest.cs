@@ -6,7 +6,7 @@ using static ASCIIMusicVisualiser8.Utility.Creation;
 using static ASCIIMusicVisualiser8.Utility.Conversion;
 using static ASCIIMusicVisualiser8.Utility.ShaderOp;
 
-namespace ASCIIMusicVisualiser8
+namespace ASCIIMusicVisualiser8.Plugins
 {
     /// <summary>
     /// <b>Size</b>: Dimensions for the shader to render on. <i>(--size, -s)</i>
@@ -18,7 +18,10 @@ namespace ASCIIMusicVisualiser8
 
         Vector2 size;
 
+        public ShaderTest()
+        {
 
+        }
         public ShaderTest(string parameterString)
         {
             ProcessParameterStringPlugin(parameterString);

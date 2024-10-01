@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using static ASCIIMusicVisualiser8.Utility.Creation;
 
-namespace ASCIIMusicVisualiser8
+namespace ASCIIMusicVisualiser8.Plugins
 {
     public class PluginBoilerplate : Plugin, IPlugin
     {
@@ -21,6 +21,8 @@ namespace ASCIIMusicVisualiser8
 
         }
         */
+
+        public PluginBoilerplate() { }
 
         public PluginBoilerplate(string parameterString)
         {
