@@ -15,7 +15,9 @@ namespace ASCIIMusicVisualiser8.Plugins
         public Square() { }
         public Square(string parameters)
         {
-            ProcessParameterString(parameters);
+            Console.WriteLine($"Processing {parameters}");
+            ProcessParameterStringPlugin(parameters);
+            
         }
 
         public override List<List<OutputPixel>> Generate(double beat, out OutputPixel transparentChar)

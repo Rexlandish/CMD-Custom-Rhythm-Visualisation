@@ -58,8 +58,10 @@ namespace ASCIIMusicVisualiser8.Effects
             double xDouble = xOffsetInterpolation.GetTime(beat);
             int x = (int)Math.Floor(Repeat(xDouble, input[0].Count));
 
+            
             for (int i = 0; i < input.Count; i++)
             {
+
                 var currentRow = input[i].GetRange(x, input[i].Count - x);
                 
                 currentRow.AddRange(input[i].GetRange(0, x));

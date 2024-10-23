@@ -122,7 +122,7 @@ namespace ASCIIMusicVisualiser8.Plugins
 
                     opacity = mainImage(new((float)_i, (float)_j), beat/2f);
 
-                    finalArray[i][j] = new((float)opacity);
+                    finalArray[i][j] = new OutputPixel((float)opacity);
                 }
             }
 

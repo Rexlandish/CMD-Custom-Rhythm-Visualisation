@@ -20,8 +20,8 @@ namespace ASCIIMusicVisualiser8
 
         static void Main(string[] args)
         {
-            /*
             Utility.Conversion.InitializeCharShadeStringDict();
+            /*
 
             Generator tubes = new("tubes", new SwirlingTubes("-s 50,50"));
             //IPlugin tubes = new SwirlingTubes("-s 50,50");
@@ -32,14 +32,10 @@ namespace ASCIIMusicVisualiser8
             return;
             */
 
-            Utility.Conversion.InitializeCharShadeStringDict();
+            //FontParser.GetData();
 
 
-            string example = """
-            PLUGIN Checkerboard : -sY 4 -sX 4 -s 200,200
-            FX ForceAlpha : -c 1
-            """;
-
+            //Display.GetAllPlugins();
 
 
             /*
@@ -92,16 +88,18 @@ namespace ASCIIMusicVisualiser8
             //Console.WriteLine(Utility.Conversion.StringifyCharlist(g.GetOutput(0).text));
             */
 
-            Run(display);
+            //Run(display);
 
-
+            Display d = ExampleDisplays.CreateBouDanDisplay();
+            Run(d);
 
         }
 
 
-        static float bpm = 104;
-        static int updateTimeMilliseconds = 10;
-        static string audioFilepath = @".\audio\happy.mp3";
+        static float bpm = 115;
+        static int updateTimeMilliseconds = 1;
+        static float millisecondDelay = 0;
+        static string audioFilepath = @".\audio\Bou Dan.wav";
         static Conductor Conductor;
         public static void Run(Display display)
         {
@@ -112,8 +110,8 @@ namespace ASCIIMusicVisualiser8
 
             WaveOutEvent waveOutEvent = PlayAudio(audioFilepath);
             Conductor = new Conductor(bpm);
-
-
+            Conductor.SetCurrentTime(0);
+            
             var watch = new System.Diagnostics.Stopwatch();
             while (true)
                 
@@ -125,13 +123,15 @@ namespace ASCIIMusicVisualiser8
                 //Console.WriteLine($"Value: {graph.GetTime(Conductor.beatsPrecise)}\r");
 
                 // Update conductor with current milliseconds
-                Conductor.SetCurrentTime((long)waveOutEvent.GetPositionTimeSpan().TotalMilliseconds);
+                Conductor.SetCurrentTime((long)waveOutEvent.GetPositionTimeSpan().TotalMilliseconds - (long)millisecondDelay);
                 
                 var generationTimer = Stopwatch.StartNew();
-                string res = display.GetFrameOnBeat(Conductor.beatsPrecise);
+                double currentBeat = Conductor.beatsPrecise;
+                string res = display.GetFrameOnBeat(currentBeat);
                 Console.WriteLine(res);
                 //display.PrettyPrint(Conductor.beatsPrecise);
-                Console.WriteLine(generationTimer.ElapsedMilliseconds);
+                Console.WriteLine("Beat " + currentBeat + "                ");
+                Console.WriteLine("FPS: " + generationTimer.ElapsedMilliseconds + "                ");
                 generationTimer.Stop();
 
                 watch.Stop();
@@ -141,7 +141,7 @@ namespace ASCIIMusicVisualiser8
                 
                 
                 Utility.ConsoleOp.GoToTopLeft();
-                //Thread.Sleep(updateTimeMilliseconds);
+                Thread.Sleep(updateTimeMilliseconds);
             }
 
 

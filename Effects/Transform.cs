@@ -198,6 +198,13 @@ namespace ASCIIMusicVisualiser8.Effects
 
             float rotationAmount = (float)(rotationInterpolation.GetTime(beat) * Math.PI / 180);
 
+            if (rotationAmount == 0)
+            {
+                newTransparentChar = transparentChar;
+                newDrawPoint = drawPoint;
+                return input;
+            }
+
 
             int width = input[0].Count;
             int height = input.Count;
@@ -234,8 +241,8 @@ namespace ASCIIMusicVisualiser8.Effects
                     
                     //pointToSampleFrom += rotationCenter/2;
 
-                    int sampleX = (int)(Math.Floor(pointToSampleFrom.X - 0.5f));
-                    int sampleY = (int)(Math.Floor(pointToSampleFrom.Y - 0.5f));
+                    int sampleX = (int)(Math.Round(pointToSampleFrom.X - 0.5f));
+                    int sampleY = (int)(Math.Round(pointToSampleFrom.Y - 0.5f));
                     // Do these need rounding?
                     int targetY = y_;// - (int)(height) + (int)(rotatedHeight);
                     int targetX = x_;// - (int)(width) + (int)(rotatedWidth);
@@ -307,9 +314,10 @@ namespace ASCIIMusicVisualiser8.Effects
             //finalGrid[(int)rotatedCenter.Y][(int)rotatedCenter.X] = '!';
 
             newTransparentChar = transparentChar;
+            //newDrawPoint = drawPoint - new Vector2((int)rotatedCenter.Y, (int)rotatedCenter.X) + new Vector2(center.Y, center.X);
             newDrawPoint = drawPoint - new Vector2((int)rotatedCenter.Y, (int)rotatedCenter.X) + new Vector2(center.Y, center.X);
 
-            
+
             //finalGrid[0][0] = '=';
             return finalGrid;
         }
@@ -317,7 +325,6 @@ namespace ASCIIMusicVisualiser8.Effects
 
         List<List<OutputPixel>> ApplyScale(List<List<OutputPixel>> input, double beat, OutputPixel transparentChar, Vector2 drawPoint, out OutputPixel newTransparentChar, out Vector2 newDrawPoint)
         {
-            List<List<OutputPixel>> finalGrid = new List<List<OutputPixel>>();
 
             // Unused for now
             //int xScaleCenter = (int)Math.Round(xScaleInterpolation.GetTime(beat));
@@ -325,14 +332,27 @@ namespace ASCIIMusicVisualiser8.Effects
 
             float scaleFactor = 1 / (float)scaleInterpolation.GetTime(beat);
 
+
+            if (scaleFactor == -1)
+            {
+                newTransparentChar = transparentChar;
+                newDrawPoint = drawPoint;
+                return input;
+            }
+
+
+            List<List<OutputPixel>> finalGrid = new List<List<OutputPixel>>();
+
             int originalWidth = input[0].Count;
             int originalHeight = input.Count;
 
-            int scaledWidth = (int)Math.Floor(originalWidth / scaleFactor);
-            int scaledHeight = (int)Math.Floor(originalHeight / scaleFactor);
+            int scaledWidth = (int)Math.Ceiling(originalWidth / scaleFactor);
+            int scaledHeight = (int)Math.Ceiling(originalHeight / scaleFactor);
 
             // Y, X
             Vector2 center = new(scaledWidth / 2f, scaledHeight / 2f);
+
+
 
             // Populate finalGrid with nearest neighbour interpolation
             for (int i = 0; i < scaledHeight; i++)
@@ -340,8 +360,8 @@ namespace ASCIIMusicVisualiser8.Effects
                 List<OutputPixel> currentRow = new List<OutputPixel>();
                 for (int j = 0; j < scaledWidth; j++)
                 {
-                    int xUnscaled = (int)Math.Round(j * scaleFactor);
-                    int yUnscaled = (int)Math.Round(i * scaleFactor);
+                    int xUnscaled = (int)Math.Floor(j * scaleFactor);
+                    int yUnscaled = (int)Math.Floor(i * scaleFactor);
 
                     OutputPixel charToAdd;
 

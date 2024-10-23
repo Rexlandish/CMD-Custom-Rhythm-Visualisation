@@ -10,6 +10,11 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
         public List<InterpolationPoint> points { get; private set; } = new();
 
 
+        public InterpolationGraph()
+        {
+            ImportFromString("");
+        }
+
         public InterpolationGraph(string stringifiedGraph)
         {
             ImportFromString(stringifiedGraph);
@@ -81,6 +86,11 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
             return regionHoldingValue.GetValue(inverseLerpValue);
         }
 
+        public override string ToString()
+        {
+            return ExportToString();
+        }
+
         public string ExportToString()
         {
             List<string> finalString = new();
@@ -101,7 +111,7 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation.Types
                 // Create default interpolation graph of 1
                 points = new List<InterpolationPoint>()
                 {
-                    new InterpolationPoint(0, 1, 1, 1, "hold", new double[0])
+                    
                 };
             }
             else

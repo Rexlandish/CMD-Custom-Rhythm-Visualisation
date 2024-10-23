@@ -41,7 +41,7 @@ namespace ASCIIMusicVisualiser8
         }
         public double beatsInteger // Current beat in integer form
         {
-            get { throw new NotImplementedException(); }
+            get { return Math.Floor(beatsPrecise); }
         }
 
         private double millisecondsPerBeat;

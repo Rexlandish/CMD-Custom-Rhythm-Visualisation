@@ -73,7 +73,7 @@ namespace ASCIIMusicVisualiser8.Plugins
             // Debug, show index of current phrase
             //wordsToRender.Add(new (index.ToString().ToCharArray()));
             //transparentChar = new char();
-            transparentChar = new(0);
+            transparentChar = new(' ');
             //transparentChar = '*';
 
             return wordsToRender;
@@ -100,6 +100,7 @@ namespace ASCIIMusicVisualiser8.Plugins
             phraseFrameCount = phraseFrames.Count;
 
             positionInterpolation = new InterpolationGraph(GetPluginParameter("wordsInterpolation").givenUserParameter);
+
         }
 
         public override void InitializeParameters()

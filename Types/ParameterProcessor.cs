@@ -31,9 +31,9 @@ namespace ASCIIMusicVisualiser8
         {
 
             // Check string for flags
-            MatchCollection matches = Regex.Matches(parameterString, @"(--?\w+)\s+(?:((\S+\s*(?!--?\w+))*|(-\d)|()*)*)+(?!-\w)"); // Thank goodness for https://www.debuggex.com
+            MatchCollection matches = Regex.Matches(parameterString, @"(--?\w+)\s([\s\S]+?)(?=\s--?\w+|\s*$)"); // Thank goodness for https://www.debuggex.com
             List<string> splitParameters = new();
-
+            
             foreach (var param in pluginParameters)
             {
                 //Console.WriteLine($"{param.parameterName} {param.givenUserParameter}");

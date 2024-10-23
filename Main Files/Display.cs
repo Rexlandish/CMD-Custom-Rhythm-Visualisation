@@ -234,7 +234,7 @@ namespace ASCIIMusicVisualiser8
                     p.InitializeParameters();
                     if (p.pluginParameters == null) continue;
                     foreach (var parameter in p.pluginParameters)
-                        Console.WriteLine(string.Join(" ", parameter.parameterFlags));
+                        Console.WriteLine(string.Join("\t", parameter.parameterFlags.Reverse()));
 
                     Console.WriteLine();
 
@@ -264,7 +264,7 @@ namespace ASCIIMusicVisualiser8
                         continue;
                     }
                     foreach (var parameter in p.pluginParameters)
-                        Console.WriteLine(string.Join(" ", parameter.parameterFlags));
+                        Console.WriteLine(string.Join("\t", parameter.parameterFlags.Reverse()));
 
                     Console.WriteLine();
                 }

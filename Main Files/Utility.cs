@@ -89,6 +89,16 @@ namespace ASCIIMusicVisualiser8
                 return string.Concat(System.Linq.Enumerable.Repeat(stringToRepeat, repetitions));
             }
 
+            public static List<T> RepeatNTimesToListUnique<T>(Func<T> objFactory, int times)
+            {
+                List<T> finalList = new();
+                for (int i = 0; i < times; i++)
+                {
+                    finalList.Add(objFactory());
+                }
+                return finalList;
+            }
+
             public static List<T> RepeatNTimesToList<T>(T obj, int times)
             {
                 List<T> finalList = new();
@@ -171,7 +181,7 @@ namespace ASCIIMusicVisualiser8
         {
 
 
-            static string charShadeString = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
+            static string charShadeString = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"; //█
 
             static Dictionary<char, double> charShadeStringDict = new Dictionary<char, double>();
             
@@ -188,10 +198,12 @@ namespace ASCIIMusicVisualiser8
                 //" .:-=+*#%@";
 
 
+                
                 density =
                     density < 0 ? 0 :
                     density > 1 ? 1 :
                     density;
+                
 
                 double index = Math.Round((charShadeString.Length - 1) * density);
                 return charShadeString[(int)index];
@@ -204,16 +216,16 @@ namespace ASCIIMusicVisualiser8
             }
             
 
-            public static double GetDensityFromChar(char c)
+            public static double GetBrightnessFromChar(char c)
             {
-                throw new Exception("PLEASE DO NOT USE GETDENSITYFROMCHAR ANYMORE; OUTPUTPIXEL HAS MADE THIS REDUNDANT!");
                 if (!initializeCharShadeStringDict)
                     throw new Exception("Char shade string dict not initialized! Please run Utility.Conversion.InitializeCharShadeStringDict() at the start of the program.");
 
                 double index = charShadeString.IndexOf(c);
                 if (index == -1)
                 {
-                    return 1; // Default value if the character wasn't found in the charShadeString
+                    throw new Exception($"Char {c} not found!");
+                    //return 1; // Default value if the character wasn't found in the charShadeString
                 }
                 // Round to the nearest 1/n
 
@@ -440,6 +452,7 @@ namespace ASCIIMusicVisualiser8
 
             public static double Repeat(double t, double length)
             {
+                if (length == 0) return 0;
                 return Clamp(t - Math.Floor(t / length) * length, 0, length);
             }
         }

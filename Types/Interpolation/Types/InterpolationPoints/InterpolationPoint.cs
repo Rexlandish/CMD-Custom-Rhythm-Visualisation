@@ -68,6 +68,11 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             return outputString;
         }
 
+        public override string ToString()
+        {
+            return ExportToString();
+        }
+
         public InterpolationPoint ImportFromString(string input)
         {
             // 0>1;0>0.5;linear;[2,3]
@@ -79,7 +84,9 @@ namespace ASCIIMusicVisualiser8.Types.Interpolation
             // Time
             string[] times = parameters[0].Split('>');
             
+
             startTime = float.Parse(times[0]);
+
             if (times.Length == 2) // Set the end time if it's been given
                 endTime = float.Parse(times[1]);
 

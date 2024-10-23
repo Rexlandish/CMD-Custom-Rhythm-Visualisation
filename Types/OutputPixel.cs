@@ -23,14 +23,14 @@
 
         public enum OutputPixelType
         {
-            VALUE,
+            BRIGHTNESS,
             CHARACTER
         }
 
         public OutputPixel(float value)
         {
             this.brightness = value;
-            type = OutputPixelType.VALUE;
+            type = OutputPixelType.BRIGHTNESS;
         }
 
         public OutputPixel(char character)
@@ -51,7 +51,7 @@
         {
             switch (type)
             {
-                case OutputPixelType.VALUE:
+                case OutputPixelType.BRIGHTNESS:
                     return Utility.Conversion.GetCharFromBrightness(brightness);
                 case OutputPixelType.CHARACTER:
                     return character;
@@ -62,10 +62,11 @@
 
         public bool IsTransparent(OutputPixel transparentPixel)
         {
+
             switch (type)
             {
-                case OutputPixelType.VALUE:
-                    if (transparentPixel.brightness == this.brightness) return true;
+                case OutputPixelType.BRIGHTNESS:
+                    if (transparentPixel.GetOutput() == this.GetOutput()) return true;
                     break;
 
                 case OutputPixelType.CHARACTER:
